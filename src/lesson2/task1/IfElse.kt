@@ -33,7 +33,28 @@ fun minBiRoot(a: Double, b: Double, c: Double): Double {
  * Мой возраст. Для заданного 0 < n < 200, рассматриваемого как возраст человека,
  * вернуть строку вида: «21 год», «32 года», «12 лет».
  */
-fun ageDescription(age: Int): String = TODO()
+fun ageDescription(age: Int): String
+{
+    var str : String
+    str= age.toString()
+    if ((age% 10 ==0) || ((age% 100>10) && (age%100<21)) || ((age %10>4) && (age%10<10)))
+    {
+        str+=" лет"
+    }
+    else
+    {
+        if (age%10==1)
+        {
+            str+=" год"
+        }
+        else
+        {
+            str+=" года"
+        }
+    }
+    return str
+}
+
 
 /**
  * Простая
@@ -44,7 +65,29 @@ fun ageDescription(age: Int): String = TODO()
  */
 fun timeForHalfWay(t1: Double, v1: Double,
                    t2: Double, v2: Double,
-                   t3: Double, v3: Double): Double = TODO()
+                   t3: Double, v3: Double): Double
+{
+    val way : Double
+    val t : Double
+    way= (t1*v1 + t2*v2 + t3*v3)/2
+    if (way > t1*v1)
+    {
+        if (way> t1*v1+t2*v2)
+        {
+            t=t1+t2 + (way-t1*v1-t2*v2)/v3
+        }
+        else
+        {
+            t=(way -t1*v1)/v2 + t1
+        }
+    }
+    else
+    {
+        t= way/v1
+    }
+    return t
+}
+
 
 /**
  * Простая
@@ -57,7 +100,27 @@ fun timeForHalfWay(t1: Double, v1: Double,
  */
 fun whichRookThreatens(kingX: Int, kingY: Int,
                        rookX1: Int, rookY1: Int,
-                       rookX2: Int, rookY2: Int): Int = TODO()
+                       rookX2: Int, rookY2: Int): Int
+{
+    var t : Int
+    t=0
+    if ((kingX==rookX1) || (kingY==rookY1))
+    {
+        t=1
+    }
+    if ((kingX==rookX2) || (kingY==rookY2))
+    {
+        if (t==1)
+        {
+            t=3
+        }
+        else
+        {
+            t=2
+        }
+    }
+    return t
+}
 
 /**
  * Простая
@@ -69,9 +132,31 @@ fun whichRookThreatens(kingX: Int, kingY: Int,
  * и 3, если угроза есть и от ладьи и от слона.
  * Считать, что ладья и слон не могут загораживать друг друга.
  */
+fun sqr(x: Int) = x * x
+
 fun rookOrBishopThreatens(kingX: Int, kingY: Int,
                           rookX: Int, rookY: Int,
-                          bishopX: Int, bishopY: Int): Int = TODO()
+                          bishopX: Int, bishopY: Int): Int
+{
+    var t : Int
+    t=0
+    if ((kingX==rookX) || (kingY==rookY))
+    {
+        t=1
+    }
+    if (sqr(kingX-bishopX)==sqr(kingY-bishopY))
+    {
+        if (t==1)
+        {
+            t=3
+        }
+        else
+        {
+            t=2
+        }
+    }
+    return t
+}
 
 /**
  * Простая
@@ -81,7 +166,54 @@ fun rookOrBishopThreatens(kingX: Int, kingY: Int,
  * прямоугольным (вернуть 1) или тупоугольным (вернуть 2).
  * Если такой треугольник не существует, вернуть -1.
  */
-fun triangleKind(a: Double, b: Double, c: Double): Int = TODO()
+fun triangleKind(a: Double, b: Double, c: Double): Int
+{
+    val max : Double
+    if ((a+b>c) && (a+c>b) && (b+c>a))
+    {
+        if (a>b)
+        {
+            if (a>c)
+            {
+                max=a
+            }
+            else
+            {
+                max=c
+            }
+        }
+        else
+        {
+            if (b>c)
+            {
+                max=b
+            }
+            else
+            {
+                max=c
+            }
+        }
+        if (max*max==a*a+b*b+c*c-max*max)
+        {
+            return 1
+        }
+        else
+        {
+            if (max*max>a*a+b*b+c*c-max*max)
+            {
+                return 2
+            }
+            else
+            {
+                return 0
+            }
+        }
+    }
+    else
+    {
+        return -1
+    }
+}
 
 /**
  * Средняя
@@ -91,4 +223,35 @@ fun triangleKind(a: Double, b: Double, c: Double): Int = TODO()
  * Найти длину пересечения отрезков AB и CD.
  * Если пересечения нет, вернуть -1.
  */
-fun segmentLength(a: Int, b: Int, c: Int, d: Int): Int = TODO()
+fun segmentLength(a: Int, b: Int, c: Int, d: Int): Int
+{
+    if ((b>=c) && (d>=a))
+    {
+        if (a<=c)
+        {
+            if (b<=d)
+            {
+                return b-c
+            }
+            else
+            {
+                return d-c
+            }
+        }
+        else
+        {
+            if (b<=d)
+            {
+                return b-a
+            }
+            else
+            {
+                return d-a
+            }
+        }
+    }
+    else
+    {
+        return -1
+    }
+}

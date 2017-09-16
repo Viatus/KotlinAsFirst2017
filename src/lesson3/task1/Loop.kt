@@ -79,21 +79,15 @@ fun digitNumber(n: Int): Int
  * Найти число Фибоначчи из ряда 1, 1, 2, 3, 5, 8, 13, 21, ... с номером n.
  * Ряд Фибоначчи определён следующим образом: fib(1) = 1, fib(2) = 1, fib(n+2) = fib(n) + fib(n+1)
  */
+fun Fib( i: Double) : Double
+{
+    if (i < 1) return 0.0
+    return if (i == 1.0) 1.0 else Fib(i - 1) + Fib(i - 2)
+}
 fun fib(n: Int): Int
 {
-    var a : Int=0
-    var b : Int=1
-    var c: Int=1
-    var t : Int
-    if (n==1) return 1
-    for (i in 2..n)
-    {
-        t=c
-        c= a+ b
-        a=b
-        b=t
-    }
-    return c
+return Fib(n.toDouble()).toInt()
+
 }
 
 /**
@@ -198,8 +192,8 @@ fun squareBetweenExists(m: Int, n: Int): Boolean
  */
 fun sc(a :Double, n: Int) : Double
 {
-    var b=a
-    for (i in 2..n)
+    var b=1.0
+    for (i in 1..n)
         b*=a
     return b
 }
@@ -209,22 +203,22 @@ fun sin(x: Double, eps: Double): Double
     var result:Double=0.0
     var k:Int=1
     var xx: Double
-    var a:Int
+    var a:Double
     var z:Int=0
     while (c>=eps)
     {
-        a=1
+        a=1.0
         for (i in 2..k)
         {
             a*=i
         }
         xx=sc(x,k)
-        c=xx/(a.toDouble())
+        c=xx/(a)
         k+=2
-        if (z%2==0)
-            result+=c
+        if (z % 2 == 0)
+            result += c
         else
-            result-=c
+            result -= c
         z++
     }
     return result
@@ -240,25 +234,25 @@ fun sin(x: Double, eps: Double): Double
 fun cos(x: Double, eps: Double): Double
 {
     var c:Double=eps
-    var result:Double=1.0
-    var k:Int=2
+    var result:Double=0.0
+    var k:Int=0
     var xx: Double
-    var a:Int
+    var a:Double
     var z:Int=0
     while (c>=eps)
     {
-        a=1
+        a=1.0
         for (i in 2..k)
         {
             a*=i
         }
         xx=sc(x,k)
-        c=xx/(a.toDouble())
+        c=xx/(a)
         k+=2
-        if (z%2==1)
-            result+=c
+        if (z % 2 == 0)
+            result += c
         else
-            result-=c
+            result -= c
         z++
     }
     return result
@@ -365,7 +359,44 @@ fun hasDifferentDigits(n: Int): Boolean
  */
 fun squareSequenceDigit(n: Int): Int
 {
-
+    var flag:Boolean=true
+    var b=0
+    var a=0
+    var i:Int=1
+    var i2:Int
+    var z:Int=0
+    var c:Int
+    while (flag)
+    {
+        i2=i*i
+        c=0
+        a=i2
+        while (i2>0)
+        {
+            c++
+            i2/=10
+        }
+        for (k in 1..c)
+        {
+            z+=1
+            if (n==z)
+            {
+                if (a>=10)
+                {
+                    b=a/scint(10,c-1)
+                    flag=false
+                }
+                else
+                {
+                    b=a
+                    flag=false
+                }
+            }
+            a%=scint(10,c-k)
+        }
+        i++
+    }
+    return b
 }
 
 /**
@@ -375,4 +406,45 @@ fun squareSequenceDigit(n: Int): Int
  * 1123581321345589144...
  * Например, 2-я цифра равна 1, 9-я 2, 14-я 5.
  */
-fun fibSequenceDigit(n: Int): Int = TODO()
+fun fibSequenceDigit(n: Int): Int
+{
+    var flag:Boolean=true
+    var b=0
+    var a=0
+    var i:Int=1
+    var i2:Int
+    var z:Int=0
+    var c:Int
+    while (flag)
+    {
+        i2=Fib(i.toDouble()).toInt()
+        c=0
+        a=i2
+        while (i2>0)
+        {
+            c++
+            i2/=10
+        }
+        for (k in 1..c)
+        {
+            z+=1
+            if (n==z)
+            {
+                if (a>=10)
+                {
+                    b=a/scint(10,c-1)
+                    flag=false
+                }
+                else
+                {
+                    b=a
+                    flag=false
+                }
+            }
+            a%=scint(10,c-k)
+        }
+        i++
+    }
+    return b
+}
+

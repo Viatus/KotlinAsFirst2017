@@ -199,26 +199,26 @@ fun sc(a :Double, n: Int) : Double
 }
 fun sin(x: Double, eps: Double): Double
 {
-    var c:Double=eps
+    var exprPart:Double=eps
     var result:Double=0.0
     var k:Int=1
     var xx: Double
-    var a:Double
+    var factorial:Double
     var z:Int=0
-    while (c>=eps)
+    while (exprPart>=eps)
     {
-        a=1.0
+        factorial=1.0
         for (i in 2..k)
         {
-            a*=i
+            factorial*=i
         }
         xx=sc(x,k)
-        c=xx/(a)
+        exprPart=xx/(factorial)
         k+=2
         if (z % 2 == 0)
-            result += c
+            result += exprPart
         else
-            result -= c
+            result -= exprPart
         z++
     }
     return result
@@ -233,26 +233,26 @@ fun sin(x: Double, eps: Double): Double
  */
 fun cos(x: Double, eps: Double): Double
 {
-    var c:Double=eps
+    var exprPart:Double=eps
     var result:Double=0.0
     var k:Int=0
     var xx: Double
-    var a:Double
+    var factorial:Double
     var z:Int=0
-    while (c>=eps)
+    while (exprPart>=eps)
     {
-        a=1.0
+        factorial=1.0
         for (i in 2..k)
         {
-            a*=i
+            factorial*=i
         }
         xx=sc(x,k)
-        c=xx/(a)
+        exprPart=xx/(factorial)
         k+=2
         if (z % 2 == 0)
-            result += c
+            result += exprPart
         else
-            result -= c
+            result -= exprPart
         z++
     }
     return result

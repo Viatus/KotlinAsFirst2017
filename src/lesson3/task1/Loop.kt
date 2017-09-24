@@ -64,6 +64,7 @@ fun digitNumber(n: Int): Int
 {
     var count = 0
     var number = n
+    if (n < 0) number*=-1
     if (n == 0) return 1
     while (number > 0)
     {
@@ -208,6 +209,10 @@ fun sin(x: Double, eps: Double): Double
     {
         xn -= 2 * Math.PI
     }
+    while (xn < -2 * Math.PI)
+    {
+        xn += 2 * Math.PI
+    }
     while (exprPart >= eps)
     {
         factorial = 1.0
@@ -246,6 +251,10 @@ fun cos(x: Double, eps: Double): Double
     while (xn > 2 * Math.PI)
     {
         xn -= 2 * Math.PI
+    }
+    while (xn < -2 * Math.PI)
+    {
+        xn += 2 * Math.PI
     }
     while (exprPart >= eps)
     {

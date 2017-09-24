@@ -35,24 +35,21 @@ fun minBiRoot(a: Double, b: Double, c: Double): Double {
  */
 fun ageDescription(age: Int): String
 {
-    var str : String
-    str= age.toString()
-    if ((age% 10 ==0) || ((age% 100>10) && (age%100<21)) || ((age %10>4) && (age%10<10)))
+    if ((age % 10 == 1) && (age % 100 / 10 != 1))
     {
-        str+=" лет"
+        return "$age год"
     }
     else
     {
-        if (age%10==1)
+        if ((age % 10 in 2..4) && (age % 100 / 10 != 1))
         {
-            str+=" год"
+            return "$age года"
         }
         else
         {
-            str+=" года"
+            return "$age лет"
         }
     }
-    return str
 }
 
 
@@ -67,25 +64,25 @@ fun timeForHalfWay(t1: Double, v1: Double,
                    t2: Double, v2: Double,
                    t3: Double, v3: Double): Double
 {
-    val way : Double
-    val t : Double
-    way= (t1*v1 + t2*v2 + t3*v3)/2
-    if (way > t1*v1)
+    val way1 = t1 * v1
+    val way2 = t2 * v2
+    val way3 = t3 * v3
+    val HalfWay = (way1 + way2 + way3) / 2.0
+    if (HalfWay > way1)
     {
-        if (way> t1*v1+t2*v2)
+        if (HalfWay > way1 + way2)
         {
-            t=t1+t2 + (way-t1*v1-t2*v2)/v3
+            return t1 + t2 + (HalfWay - way1 - way2) / v3
         }
         else
         {
-            t=(way -t1*v1)/v2 + t1
+            return (HalfWay - way1) / v2 + t1
         }
     }
     else
     {
-        t= way/v1
+       return HalfWay / v1
     }
-    return t
 }
 
 
@@ -102,22 +99,14 @@ fun whichRookThreatens(kingX: Int, kingY: Int,
                        rookX1: Int, rookY1: Int,
                        rookX2: Int, rookY2: Int): Int
 {
-    var t : Int
-    t=0
-    if ((kingX==rookX1) || (kingY==rookY1))
+    var t = 0
+    if (kingX == rookX1 || kingY == rookY1)
     {
         t=1
     }
-    if ((kingX==rookX2) || (kingY==rookY2))
+    if (kingX == rookX2 || kingY == rookY2)
     {
-        if (t==1)
-        {
-            t=3
-        }
-        else
-        {
-            t=2
-        }
+        t+=2
     }
     return t
 }
@@ -139,21 +128,14 @@ fun rookOrBishopThreatens(kingX: Int, kingY: Int,
                           bishopX: Int, bishopY: Int): Int
 {
     var t : Int
-    t=0
-    if ((kingX==rookX) || (kingY==rookY))
+    t = 0
+    if ((kingX == rookX) || (kingY == rookY))
     {
-        t=1
+        t = 1
     }
-    if (sqr(kingX-bishopX)==sqr(kingY-bishopY))
+    if (Math.abs(kingX - bishopX) == Math.abs(kingY - bishopY))
     {
-        if (t==1)
-        {
-            t=3
-        }
-        else
-        {
-            t=2
-        }
+        t+=2
     }
     return t
 }
@@ -169,50 +151,52 @@ fun rookOrBishopThreatens(kingX: Int, kingY: Int,
 fun triangleKind(a: Double, b: Double, c: Double): Int
 {
     val max : Double
-    if ((a+b>c) && (a+c>b) && (b+c>a))
+    if (a + b <= c || a + c <= b || b + c <= a)
     {
-        if (a>b)
+        return -1
+    }
+    if (a>b)
+    {
+        if (a>c)
         {
-            if (a>c)
-            {
-                max=a
-            }
-            else
-            {
-                max=c
-            }
+            max=a
         }
         else
         {
-            if (b>c)
-            {
-                max=b
-            }
-            else
-            {
-                max=c
-            }
-        }
-        if (max*max==a*a+b*b+c*c-max*max)
-        {
-            return 1
-        }
-        else
-        {
-            if (max*max>a*a+b*b+c*c-max*max)
-            {
-                return 2
-            }
-            else
-            {
-                return 0
-            }
+            max=c
         }
     }
     else
     {
-        return -1
+        if (b>c)
+        {
+            max=b
+        }
+        else
+        {
+            max=c
+        }
     }
+    val max2 = max * max
+    val a2 = a * a
+    val b2 = b * b
+    val c2 = c * c
+    if (max2 == a2 + b2 + c2 - max2)
+    {
+        return 1
+    }
+    else
+    {
+        if (max2 > a2 + b2 + c2 - max2)
+        {
+            return 2
+        }
+        else
+        {
+            return 0
+        }
+    }
+
 }
 
 /**
@@ -225,33 +209,30 @@ fun triangleKind(a: Double, b: Double, c: Double): Int
  */
 fun segmentLength(a: Int, b: Int, c: Int, d: Int): Int
 {
-    if ((b>=c) && (d>=a))
+    if ((b < c) && (d < a))
     {
-        if (a<=c)
+        return -1
+    }
+    if (a <= c)
+    {
+        if (b <= d)
         {
-            if (b<=d)
-            {
-                return b-c
-            }
-            else
-            {
-                return d-c
-            }
+            return b - c
         }
         else
         {
-            if (b<=d)
-            {
-                return b-a
-            }
-            else
-            {
-                return d-a
-            }
+            return d - c
         }
     }
     else
     {
-        return -1
+        if (b <= d)
+        {
+            return b - a
+        }
+        else
+        {
+            return d - a
+        }
     }
 }

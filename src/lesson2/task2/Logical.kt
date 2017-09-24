@@ -19,7 +19,7 @@ fun pointInsideCircle(x: Double, y: Double, x0: Double, y0: Double, r: Double) =
  */
 fun isNumberHappy(number: Int): Boolean
 {
-    return (number / 1000 + number /100 % 10 == number % 10+ number % 100 / 10)
+    return (number / 1000 + number /100 % 10 == number % 10 + number % 100 / 10)
 }
 
 /**
@@ -29,9 +29,10 @@ fun isNumberHappy(number: Int): Boolean
  * Определить, угрожают ли они друг другу. Вернуть true, если угрожают.
  * Считать, что ферзи не могут загораживать друг друга.
  */
+fun sqr (a : Int) : Int = a*a
 fun queenThreatens(x1: Int, y1: Int, x2: Int, y2: Int): Boolean
 {
-            return ((y1==y2) || (x1==x2) || (((x1-x2)*(x1-x2))==((y1-y2)*(y1-y2))))
+            return (y1 == y2 || x1 == x2 || sqr(x1 - x2) == sqr(y1 - y2))
 }
 
 /**
@@ -44,7 +45,7 @@ fun queenThreatens(x1: Int, y1: Int, x2: Int, y2: Int): Boolean
 fun circleInside(x1: Double, y1: Double, r1: Double,
                  x2: Double, y2: Double, r2: Double): Boolean
 {
-    return (Math.sqrt((x1-x2)*(x1-x2) + (y1-y2)*(y1-y2)) + r1<=r2)
+    return Math.sqrt(sqr(x1 - x2) + sqr(y1 - y2)) + r1 <= r2
 }
 
 /**
@@ -56,7 +57,34 @@ fun circleInside(x1: Double, y1: Double, r1: Double,
  * кирпич 4 х 4 х 4 пройдёт через отверстие 4 х 4.
  * Вернуть true, если кирпич пройдёт
  */
+fun min (a : Int, b : Int) : Int
+{
+    if (a < b)
+    {
+        return a
+    }
+    else
+    {
+        return b
+    }
+}
+fun max (a : Int, b : Int) : Int
+{
+    if (a > b)
+    {
+        return a
+    }
+    else
+    {
+        return b
+    }
+}
 fun brickPasses(a: Int, b: Int, c: Int, r: Int, s: Int): Boolean
 {
-    return (((a<=r) && (b<=s)) || ((a<=s) && (b<=r)) || ((c<=r) && (b<=s)) || ((b<=r) && (c<=s)) || ((a<=r) && (c<=s)) || ((c<=r) && (a<=s)))
+    val BrickLenght = min(min(a, b), c)
+    val BrickHeihgt = max(max(a, b), c)
+    val BrickWidth = a + b + c - BrickHeihgt - BrickLenght
+    val HoleLenght = min(s, r)
+    val HoleWidth = max(s, r)
+    return BrickWidth <= HoleWidth && BrickLenght <= HoleLenght
 }

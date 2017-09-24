@@ -62,10 +62,10 @@ fun digitCountInNumber(n: Int, m: Int): Int =
  */
 fun digitNumber(n: Int): Int
 {
-    var count : Int=0
-    var number : Int=n
-    if (n==0) return 1
-    while (number>0)
+    var count = 0
+    var number = n
+    if (n == 0) return 1
+    while (number > 0)
     {
         count++
         number/=10
@@ -79,14 +79,10 @@ fun digitNumber(n: Int): Int
  * Найти число Фибоначчи из ряда 1, 1, 2, 3, 5, 8, 13, 21, ... с номером n.
  * Ряд Фибоначчи определён следующим образом: fib(1) = 1, fib(2) = 1, fib(n+2) = fib(n) + fib(n+1)
  */
-fun Fib( i: Double) : Double
-{
-    if (i < 1) return 0.0
-    return if (i == 1.0) 1.0 else Fib(i - 1) + Fib(i - 2)
-}
 fun fib(n: Int): Int
 {
-return Fib(n.toDouble()).toInt()
+    if (n < 1) return 0
+    return if (n == 1) 1 else fib(n - 1) + fib(n - 2)
 
 }
 
@@ -99,13 +95,15 @@ return Fib(n.toDouble()).toInt()
 fun lcm(m: Int, n: Int): Int
 {
     var max : Int
-    if (m>n)
+    if (m > n)
         max = m
     else
-    max=m
-    for (i in max..m*n)
     {
-        if ((i % m==0) && (i % n==0))
+        max = m
+    }
+    for (i in max..m * n)
+    {
+        if ((i % m == 0) && (i % n == 0))
             return i
     }
     return -1
@@ -118,7 +116,7 @@ fun lcm(m: Int, n: Int): Int
  */
 fun minDivisor(n: Int): Int
 {
-    for (i in 2..n-1)
+    for (i in 2..n - 1)
     {
         if (n % i == 0)
             return i
@@ -133,11 +131,11 @@ fun minDivisor(n: Int): Int
  */
 fun maxDivisor(n: Int): Int
 {
-    var max:Int=1
-    for (i in 1..n-1)
+    var max : Int = 1
+    for (i in 1..n - 1)
     {
-        if (n%i==0)
-        max=i
+        if (n % i == 0)
+        max = i
     }
     return max
 }
@@ -151,16 +149,16 @@ fun maxDivisor(n: Int): Int
  */
 fun isCoPrime(m: Int, n: Int): Boolean
 {
-    var b:Boolean=true
-    var min:Int
-    if (m>n)
-        min=n
+    var b : Boolean = true
+    var min : Int
+    if (m > n)
+        min = n
     else
-        min=m
+        min = m
     for (i in 2..min)
     {
-        if ((m%i==0) && (n%i==0))
-            b=false
+        if ((m % i == 0) && (n % i == 0))
+            b = false
     }
     return b
 }
@@ -176,7 +174,7 @@ fun squareBetweenExists(m: Int, n: Int): Boolean
 {
     for (i in m..n)
     {
-        if (Math.sqrt(i.toDouble()).toInt().toDouble()==Math.sqrt(i.toDouble()))
+        if (Math.sqrt(i.toDouble()).toInt().toDouble() == Math.sqrt(i.toDouble()))
         {
             return true
         }
@@ -192,28 +190,33 @@ fun squareBetweenExists(m: Int, n: Int): Boolean
  */
 fun sc(a :Double, n: Int) : Double
 {
-    var b=1.0
+    var b = 1.0
     for (i in 1..n)
         b*=a
     return b
 }
 fun sin(x: Double, eps: Double): Double
 {
-    var exprPart:Double=eps
-    var result:Double=0.0
-    var k:Int=1
-    var xx: Double
-    var factorial:Double
-    var z:Int=0
-    while (exprPart>=eps)
+    var exprPart : Double = eps
+    var result : Double = 0.0
+    var k : Int = 1
+    var xx : Double
+    var factorial : Double
+    var z : Int = 0
+    var xn =x
+    while (xn > 2 * Math.PI)
     {
-        factorial=1.0
+        xn -= 2 * Math.PI
+    }
+    while (exprPart >= eps)
+    {
+        factorial = 1.0
         for (i in 2..k)
         {
             factorial*=i
         }
-        xx=sc(x,k)
-        exprPart=xx/(factorial)
+        xx=sc(xn, k)
+        exprPart = xx / factorial
         k+=2
         if (z % 2 == 0)
             result += exprPart
@@ -233,21 +236,26 @@ fun sin(x: Double, eps: Double): Double
  */
 fun cos(x: Double, eps: Double): Double
 {
-    var exprPart:Double=eps
-    var result:Double=0.0
-    var k:Int=0
-    var xx: Double
-    var factorial:Double
-    var z:Int=0
-    while (exprPart>=eps)
+    var exprPart : Double = eps
+    var result : Double = 0.0
+    var k : Int = 0
+    var xx : Double
+    var factorial : Double
+    var z : Int = 0
+    var xn = x
+    while (xn > 2 * Math.PI)
     {
-        factorial=1.0
+        xn -= 2 * Math.PI
+    }
+    while (exprPart >= eps)
+    {
+        factorial = 1.0
         for (i in 2..k)
         {
             factorial*=i
         }
-        xx=sc(x,k)
-        exprPart=xx/(factorial)
+        xx=sc(xn, k)
+        exprPart = xx / factorial
         k+=2
         if (z % 2 == 0)
             result += exprPart
@@ -266,28 +274,28 @@ fun cos(x: Double, eps: Double): Double
  */
 fun scint(a :Int, n: Int) : Int
 {
-    var b=1
+    var b = 1
     for (i in 1..n)
         b*=a
     return b
 }
 fun revert(n: Int): Int
 {
-    var a:Int=n
-    var c:Int =0
-    var d:Int
-    var nn:Int=0
-    while (a>0)
+    var a : Int = n
+    var c : Int = 0
+    var d : Int
+    var nn : Int = 0
+    while (a > 0)
     {
         c++
         a/=10
     }
-    a=n
+    a = n
     for (i in 1..c)
     {
-        d= a % 10
+        d = a % 10
         a/=10
-        nn+=d*scint(10,(c-i))
+        nn += d * scint(10, (c - i))
     }
     return nn
 }
@@ -301,17 +309,17 @@ fun revert(n: Int): Int
  */
 fun isPalindrome(n: Int): Boolean
 {
-    var a:Int=n
-    var c:Int =0
-    while (a>0)
+    var a : Int = n
+    var c : Int = 0
+    while (a > 0)
     {
         c++
         a/=10
     }
-    a=n
-    while (a>=10)
+    a = n
+    while (a >= 10)
     {
-        if (a/scint(10,c-1)!=a%10)
+        if (a / scint(10,c-1) != a % 10)
             return false
         a%=scint(10,c-1)
         a/=10
@@ -328,21 +336,21 @@ fun isPalindrome(n: Int): Boolean
  */
 fun hasDifferentDigits(n: Int): Boolean
 {
-    var a:Int=n
-    var t:Int
-    var c:Int =0
-    while (a>0)
+    var a : Int = n
+    var t : Int
+    var c = 0
+    while (a > 0)
     {
         c++
         a/=10
     }
-    for (i in 1..c-1)
+    for (i in 1..c - 1)
     {
-        a=n
-        t=a/scint(10,c-1)%10
-        while (a>0)
+        a = n
+        t = a / scint(10,c - 1 )% 10
+        while (a > 0)
         {
-            if (t!= a%10)
+            if (t != a % 10)
                 return true
             a/=10
         }
@@ -359,19 +367,19 @@ fun hasDifferentDigits(n: Int): Boolean
  */
 fun squareSequenceDigit(n: Int): Int
 {
-    var flag:Boolean=true
-    var b=0
-    var a=0
-    var i:Int=1
-    var i2:Int
-    var z:Int=0
-    var c:Int
+    var flag : Boolean = true
+    var b = 0
+    var a = 0
+    var i = 1
+    var i2 : Int
+    var z : Int = 0
+    var c : Int
     while (flag)
     {
-        i2=i*i
-        c=0
-        a=i2
-        while (i2>0)
+        i2 = i * i
+        c = 0
+        a = i2
+        while (i2 > 0)
         {
             c++
             i2/=10
@@ -379,17 +387,17 @@ fun squareSequenceDigit(n: Int): Int
         for (k in 1..c)
         {
             z+=1
-            if (n==z)
+            if (n == z)
             {
-                if (a>=10)
+                if (a >= 10)
                 {
-                    b=a/scint(10,c-1)
-                    flag=false
+                    b = a / scint(10,c - 1)
+                    flag = false
                 }
                 else
                 {
-                    b=a
-                    flag=false
+                    b = a
+                    flag = false
                 }
             }
             a%=scint(10,c-k)
@@ -408,19 +416,19 @@ fun squareSequenceDigit(n: Int): Int
  */
 fun fibSequenceDigit(n: Int): Int
 {
-    var flag:Boolean=true
-    var b=0
-    var a=0
-    var i:Int=1
-    var i2:Int
-    var z:Int=0
-    var c:Int
+    var flag = true
+    var b = 0
+    var a = 0
+    var i = 1
+    var i2 : Int
+    var z = 0
+    var c : Int
     while (flag)
     {
-        i2=Fib(i.toDouble()).toInt()
-        c=0
-        a=i2
-        while (i2>0)
+        i2 = fib(i)
+        c = 0
+        a = i2
+        while (i2 > 0)
         {
             c++
             i2/=10
@@ -428,17 +436,17 @@ fun fibSequenceDigit(n: Int): Int
         for (k in 1..c)
         {
             z+=1
-            if (n==z)
+            if (n == z)
             {
-                if (a>=10)
+                if (a >= 10)
                 {
-                    b=a/scint(10,c-1)
-                    flag=false
+                    b = a / scint(10,c - 1)
+                    flag = false
                 }
                 else
                 {
-                    b=a
-                    flag=false
+                    b = a
+                    flag = false
                 }
             }
             a%=scint(10,c-k)

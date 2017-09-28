@@ -1,4 +1,5 @@
 @file:Suppress("UNUSED_PARAMETER")
+
 package lesson2.task1
 
 import lesson1.task1.discriminant
@@ -33,20 +34,13 @@ fun minBiRoot(a: Double, b: Double, c: Double): Double {
  * Мой возраст. Для заданного 0 < n < 200, рассматриваемого как возраст человека,
  * вернуть строку вида: «21 год», «32 года», «12 лет».
  */
-fun ageDescription(age: Int): String
-{
-    if ((age % 10 == 1) && (age % 100 / 10 != 1))
-    {
+fun ageDescription(age: Int): String {
+    if ((age % 10 == 1) && (age % 100 / 10 != 1)) {
         return "$age год"
-    }
-    else
-    {
-        if ((age % 10 in 2..4) && (age % 100 / 10 != 1))
-        {
+    } else {
+        if ((age % 10 in 2..4) && (age % 100 / 10 != 1)) {
             return "$age года"
-        }
-        else
-        {
+        } else {
             return "$age лет"
         }
     }
@@ -62,26 +56,15 @@ fun ageDescription(age: Int): String
  */
 fun timeForHalfWay(t1: Double, v1: Double,
                    t2: Double, v2: Double,
-                   t3: Double, v3: Double): Double
-{
+                   t3: Double, v3: Double): Double {
     val way1 = t1 * v1
     val way2 = t2 * v2
     val way3 = t3 * v3
-    val HalfWay = (way1 + way2 + way3) / 2.0
-    if (HalfWay > way1)
-    {
-        if (HalfWay > way1 + way2)
-        {
-            return t1 + t2 + (HalfWay - way1 - way2) / v3
-        }
-        else
-        {
-            return (HalfWay - way1) / v2 + t1
-        }
-    }
-    else
-    {
-       return HalfWay / v1
+    val halfWay = (way1 + way2 + way3) / 2.0
+    return when {
+        halfWay > way1 + way2 -> t1 + t2 + (halfWay - way1 - way2) / v3
+        halfWay > way1 -> (halfWay - way1) / v2 + t1
+        else -> halfWay / v1
     }
 }
 
@@ -97,16 +80,13 @@ fun timeForHalfWay(t1: Double, v1: Double,
  */
 fun whichRookThreatens(kingX: Int, kingY: Int,
                        rookX1: Int, rookY1: Int,
-                       rookX2: Int, rookY2: Int): Int
-{
+                       rookX2: Int, rookY2: Int): Int {
     var t = 0
-    if (kingX == rookX1 || kingY == rookY1)
-    {
-        t=1
+    if (kingX == rookX1 || kingY == rookY1) {
+        t = 1
     }
-    if (kingX == rookX2 || kingY == rookY2)
-    {
-        t+=2
+    if (kingX == rookX2 || kingY == rookY2) {
+        t += 2
     }
     return t
 }
@@ -125,17 +105,13 @@ fun sqr(x: Int) = x * x
 
 fun rookOrBishopThreatens(kingX: Int, kingY: Int,
                           rookX: Int, rookY: Int,
-                          bishopX: Int, bishopY: Int): Int
-{
-    var t : Int
-    t = 0
-    if ((kingX == rookX) || (kingY == rookY))
-    {
+                          bishopX: Int, bishopY: Int): Int {
+    var t = 0
+    if ((kingX == rookX) || (kingY == rookY)) {
         t = 1
     }
-    if (Math.abs(kingX - bishopX) == Math.abs(kingY - bishopY))
-    {
-        t+=2
+    if (Math.abs(kingX - bishopX) == Math.abs(kingY - bishopY)) {
+        t += 2
     }
     return t
 }
@@ -148,53 +124,35 @@ fun rookOrBishopThreatens(kingX: Int, kingY: Int,
  * прямоугольным (вернуть 1) или тупоугольным (вернуть 2).
  * Если такой треугольник не существует, вернуть -1.
  */
-fun triangleKind(a: Double, b: Double, c: Double): Int
-{
-    val max : Double
-    if (a + b <= c || a + c <= b || b + c <= a)
-    {
+fun triangleKind(a: Double, b: Double, c: Double): Int {
+    val max: Double
+    if (a + b <= c || a + c <= b || b + c <= a) {
         return -1
     }
-    if (a>b)
-    {
-        if (a>c)
-        {
-            max=a
+    if (a > b) {
+        if (a > c) {
+            max = a
+        } else {
+            max = c
         }
-        else
-        {
-            max=c
-        }
-    }
-    else
-    {
-        if (b>c)
-        {
-            max=b
-        }
-        else
-        {
-            max=c
+    } else {
+        if (b > c) {
+            max = b
+        } else {
+            max = c
         }
     }
     val max2 = max * max
     val a2 = a * a
     val b2 = b * b
     val c2 = c * c
-    if (max2 == a2 + b2 + c2 - max2)
-    {
+    if (max2 == a2 + b2 + c2 - max2) {
         return 1
-    }
-    else
-    {
-        if (max2 > a2 + b2 + c2 - max2)
-        {
+    } else {
+        if (max2 > a2 + b2 + c2 - max2) {
             return 2
         }
-        else
-        {
-            return 0
-        }
+        return 0
     }
 
 }
@@ -207,31 +165,20 @@ fun triangleKind(a: Double, b: Double, c: Double): Int
  * Найти длину пересечения отрезков AB и CD.
  * Если пересечения нет, вернуть -1.
  */
-fun segmentLength(a: Int, b: Int, c: Int, d: Int): Int
-{
-    if ((b < c) || (d < a))
-    {
+fun segmentLength(a: Int, b: Int, c: Int, d: Int): Int {
+    if (b < c || d < a) {
         return -1
     }
-    if (a <= c)
-    {
-        if (b <= d)
-        {
+    if (a <= c) {
+        if (b <= d) {
             return b - c
-        }
-        else
-        {
+        } else {
             return d - c
         }
-    }
-    else
-    {
-        if (b <= d)
-        {
+    } else {
+        if (b <= d) {
             return b - a
-        }
-        else
-        {
+        } else {
             return d - a
         }
     }

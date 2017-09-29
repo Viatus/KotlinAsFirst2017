@@ -342,34 +342,48 @@ fun hasDifferentDigits(n: Int): Boolean {
  * 149162536496481100121144...
  * Например, 2-я цифра равна 4, 7-я 5, 12-я 6.
  */
+fun numberOfDigits(number: Int): Int {
+    var a = number
+    var counter = 0
+    while (a > 0) {
+        counter++
+        a /= 10
+    }
+    return counter
+}
+
+fun getDigit(number: Int, amountOfDigits: Int): Int {
+    var numberReplica = number
+    for (i in 1 until amountOfDigits) {
+        numberReplica /= 10
+    }
+    return numberReplica
+}
+
 fun squareSequenceDigit(n: Int): Int {
     var flag: Boolean = true
     var digit = 0
     var number = 0
     var i = 1
     var i2: Int
-    var digitCoounter: Int = 0
-    var numberOfDigits: Int
+    var digitCounter: Int = 0
+    var amountOfDigits: Int
     while (flag) {
         i2 = i * i
-        numberOfDigits = 0
         number = i2
-        while (i2 > 0) {
-            numberOfDigits++
-            i2 /= 10
-        }
-        for (k in 1..numberOfDigits) {
-            digitCoounter += 1
-            if (n == digitCoounter) {
+        amountOfDigits = numberOfDigits(i2)
+        for (k in 1..amountOfDigits) {
+            digitCounter += 1
+            if (n == digitCounter) {
                 if (number >= 10) {
-                    digit = number / scint(10, numberOfDigits - 1)
-                    flag = false
+                    digit = getDigit(number, amountOfDigits)
                 } else {
                     digit = number
-                    flag = false
                 }
+                flag = false
             }
-            number %= scint(10, numberOfDigits - k)
+            number %= scint(10, amountOfDigits - 1)
+            amountOfDigits--
         }
         i++
     }
@@ -390,27 +404,23 @@ fun fibSequenceDigit(n: Int): Int {
     var i = 1
     var i2: Int
     var digitCounter = 0
-    var numberOfDigits: Int
+    var amountOfDigits: Int
     while (flag) {
         i2 = fib(i)
-        numberOfDigits = 0
         number = i2
-        while (i2 > 0) {
-            numberOfDigits++
-            i2 /= 10
-        }
-        for (k in 1..numberOfDigits) {
+        amountOfDigits = numberOfDigits(i2)
+        for (k in 1..amountOfDigits) {
             digitCounter += 1
             if (n == digitCounter) {
                 if (number >= 10) {
-                    digit = number / scint(10, numberOfDigits - 1)
-                    flag = false
+                    digit = getDigit(number, amountOfDigits)
                 } else {
                     digit = number
-                    flag = false
                 }
+                flag = false
             }
-            number %= scint(10, numberOfDigits - k)
+            number %= scint(10, amountOfDigits - 1)
+            amountOfDigits--
         }
         i++
     }

@@ -23,7 +23,7 @@ fun numberAmount(number: Int): Int {
 }
 
 fun isNumberHappy(number: Int): Boolean {
-    return (numberAmount(number / 100) == numberAmount(number % 100))
+    return numberAmount(number / 100) == numberAmount(number % 100)
 }
 
 /**
@@ -34,7 +34,7 @@ fun isNumberHappy(number: Int): Boolean {
  * Считать, что ферзи не могут загораживать друг друга.
  */
 fun queenThreatens(x1: Int, y1: Int, x2: Int, y2: Int): Boolean {
-    return (y1 == y2 || x1 == x2 || Math.abs(x1 - x2) == Math.abs(y1 - y2))
+    return y1 == y2 || x1 == x2 || Math.abs(x1 - x2) == Math.abs(y1 - y2)
 }
 
 /**
@@ -60,7 +60,7 @@ fun circleInside(x1: Double, y1: Double, r1: Double,
  */
 
 fun brickPasses(a: Int, b: Int, c: Int, r: Int, s: Int): Boolean {
-    val brickLenght = Math.max(Math.min(a, b), c)
+    val brickLenght = Math.min(Math.min(a, b), c)
     val brickHeihgt = Math.max(Math.max(a, b), c)
     val brickWidth = a + b + c - brickHeihgt - brickLenght
     val holeLenght = Math.min(s, r)

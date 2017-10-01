@@ -63,8 +63,7 @@ fun digitCountInNumber(n: Int, m: Int): Int =
  */
 fun digitNumber(n: Int): Int {
     var count = 0
-    var number = n
-    if (n < 0) number *= -1
+    var number = Math.abs(n)
     if (n == 0) return 1
     while (number > 0) {
         count++
@@ -82,7 +81,6 @@ fun digitNumber(n: Int): Int {
 fun fib(n: Int): Int {
     if (n < 1) return 0
     return if (n == 1) 1 else fib(n - 1) + fib(n - 2)
-
 }
 
 /**
@@ -92,12 +90,7 @@ fun fib(n: Int): Int {
  * минимальное число k, которое делится и на m и на n без остатка
  */
 fun lcm(m: Int, n: Int): Int {
-    var max: Int
-    if (m > n)
-        max = m
-    else {
-        max = m
-    }
+    var max = Math.max(m, n)
     for (i in max..m * n) {
         if ((i % m == 0) && (i % n == 0))
             return i
@@ -111,7 +104,7 @@ fun lcm(m: Int, n: Int): Int {
  * Для заданного числа n > 1 найти минимальный делитель, превышающий 1
  */
 fun minDivisor(n: Int): Int {
-    for (i in 2..n - 1) {
+    for (i in 2 until n) {
         if (n % i == 0)
             return i
     }
@@ -125,7 +118,7 @@ fun minDivisor(n: Int): Int {
  */
 fun maxDivisor(n: Int): Int {
     var max: Int = 1
-    for (i in 1..n - 1) {
+    for (i in 1 until n) {
         if (n % i == 0)
             max = i
     }
@@ -140,17 +133,12 @@ fun maxDivisor(n: Int): Int {
  * Например, 25 и 49 взаимно простые, а 6 и 8 -- нет.
  */
 fun isCoPrime(m: Int, n: Int): Boolean {
-    var b: Boolean = true
-    var min: Int
-    if (m > n)
-        min = n
-    else
-        min = m
+    var min = Math.min(m, n)
     for (i in 2..min) {
         if ((m % i == 0) && (n % i == 0))
-            b = false
+            return false
     }
-    return b
+    return true
 }
 
 /**
@@ -266,22 +254,27 @@ fun scint(a: Int, n: Int): Int {
     return b
 }
 
-fun revert(n: Int): Int {
-    var a: Int = n
-    var c: Int = 0
-    var d: Int
-    var nn: Int = 0
+fun numberOfDigits(number: Int): Int {
+    var a = number
+    var counter = 0
     while (a > 0) {
-        c++
+        counter++
         a /= 10
     }
-    a = n
-    for (i in 1..c) {
-        d = a % 10
-        a /= 10
-        nn += d * scint(10, (c - i))
+    return counter
+}
+
+fun revert(n: Int): Int {
+    var number: Int = n
+    var amountOfDigits = numberOfDigits(number)
+    var digit: Int
+    var newNumber: Int = 0
+    for (i in 1..amountOfDigits) {
+        digit = number % 10
+        number /= 10
+        newNumber += digit * scint(10, (amountOfDigits - i))
     }
-    return nn
+    return newNumber
 }
 
 /**
@@ -292,19 +285,14 @@ fun revert(n: Int): Int {
  * 15751 -- палиндром, 3653 -- нет.
  */
 fun isPalindrome(n: Int): Boolean {
-    var a: Int = n
-    var c: Int = 0
-    while (a > 0) {
-        c++
-        a /= 10
-    }
-    a = n
-    while (a >= 10) {
-        if (a / scint(10, c - 1) != a % 10)
+    var number: Int = n
+    var amountOfDigits = numberOfDigits(number)
+    while (number >= 10) {
+        if (number / scint(10, amountOfDigits - 1) != number % 10)
             return false
-        a %= scint(10, c - 1)
-        a /= 10
-        c -= 2
+        number %= scint(10, amountOfDigits - 1)
+        number /= 10
+        amountOfDigits -= 2
     }
     return true
 }
@@ -316,21 +304,13 @@ fun isPalindrome(n: Int): Boolean {
  * Например, 54 и 323 состоят из разных цифр, а 111 и 0 из одинаковых.
  */
 fun hasDifferentDigits(n: Int): Boolean {
-    var number: Int = n
-    var digit: Int
-    var numberOfDigits = 0
+    var digit = n % 10
+    var number = n / 10
     while (number > 0) {
-        numberOfDigits++
-        number /= 10
-    }
-    for (i in 1..numberOfDigits - 1) {
-        number = n
-        digit = number / scint(10, numberOfDigits - 1) % 10
-        while (number > 0) {
-            if (digit != number % 10)
-                return true
-            number /= 10
+        if (digit != number % 10) {
+            return true
         }
+        number /= 10
     }
     return false
 }
@@ -342,15 +322,6 @@ fun hasDifferentDigits(n: Int): Boolean {
  * 149162536496481100121144...
  * Например, 2-я цифра равна 4, 7-я 5, 12-я 6.
  */
-fun numberOfDigits(number: Int): Int {
-    var a = number
-    var counter = 0
-    while (a > 0) {
-        counter++
-        a /= 10
-    }
-    return counter
-}
 
 fun getDigit(number: Int, amountOfDigits: Int): Int {
     var numberReplica = number
@@ -362,32 +333,27 @@ fun getDigit(number: Int, amountOfDigits: Int): Int {
 
 fun squareSequenceDigit(n: Int): Int {
     var flag: Boolean = true
-    var digit = 0
     var number = 0
     var i = 1
-    var i2: Int
     var digitCounter: Int = 0
     var amountOfDigits: Int
     while (flag) {
-        i2 = i * i
-        number = i2
-        amountOfDigits = numberOfDigits(i2)
+        number = i * i
+        amountOfDigits = numberOfDigits(number)
         for (k in 1..amountOfDigits) {
             digitCounter += 1
             if (n == digitCounter) {
-                if (number >= 10) {
-                    digit = getDigit(number, amountOfDigits)
-                } else {
-                    digit = number
+                return when{
+                    number >= 10 -> getDigit(number, amountOfDigits)
+                    else -> number
                 }
-                flag = false
             }
             number %= scint(10, amountOfDigits - 1)
             amountOfDigits--
         }
         i++
     }
-    return digit
+    return -1
 }
 
 /**
@@ -399,31 +365,26 @@ fun squareSequenceDigit(n: Int): Int {
  */
 fun fibSequenceDigit(n: Int): Int {
     var flag = true
-    var digit = 0
     var number = 0
     var i = 1
-    var i2: Int
     var digitCounter = 0
     var amountOfDigits: Int
     while (flag) {
-        i2 = fib(i)
-        number = i2
-        amountOfDigits = numberOfDigits(i2)
+        number = fib(i)
+        amountOfDigits = numberOfDigits(number)
         for (k in 1..amountOfDigits) {
             digitCounter += 1
             if (n == digitCounter) {
-                if (number >= 10) {
-                    digit = getDigit(number, amountOfDigits)
-                } else {
-                    digit = number
+                return when{
+                    number >= 10 -> getDigit(number, amountOfDigits)
+                    else -> number
                 }
-                flag = false
             }
             number %= scint(10, amountOfDigits - 1)
             amountOfDigits--
         }
         i++
     }
-    return digit
+    return -1
 }
 

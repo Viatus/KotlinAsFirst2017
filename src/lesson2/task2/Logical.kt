@@ -60,10 +60,10 @@ fun circleInside(x1: Double, y1: Double, r1: Double,
  */
 
 fun brickPasses(a: Int, b: Int, c: Int, r: Int, s: Int): Boolean {
-    val brickLenght = Math.min(Math.min(a, b), c)
-    val brickHeihgt = Math.max(Math.max(a, b), c)
-    val brickWidth = a + b + c - brickHeihgt - brickLenght
-    val holeLenght = Math.min(s, r)
+    val brickLength = Math.min(Math.min(a, b), c)
+    val brickHeight = Math.max(Math.max(a, b), c)
+    val brickWidth = a + b + c - brickHeight - brickLength
+    val holeLength = Math.min(s, r)
     val holeWidth = Math.max(s, r)
-    return brickWidth <= holeWidth && brickLenght <= holeLenght
+    return brickWidth <= holeWidth && brickLength <= holeLength
 }

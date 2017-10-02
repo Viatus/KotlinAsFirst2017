@@ -60,15 +60,11 @@ fun timeForHalfWay(t1: Double, v1: Double,
     val way1 = t1 * v1
     val way2 = t2 * v2
     val way3 = t3 * v3
-    val HalfWay = (way1 + way2 + way3) / 2.0
-    if (HalfWay > way1) {
-        if (HalfWay > way1 + way2) {
-            return t1 + t2 + (HalfWay - way1 - way2) / v3
-        } else {
-            return (HalfWay - way1) / v2 + t1
-        }
-    } else {
-        return HalfWay / v1
+    val halfWay = (way1 + way2 + way3) / 2.0
+    return when {
+        halfWay > way1 + way2 -> t1 + t2 + (halfWay - way1 - way2) / v3
+        halfWay > way1 -> (halfWay - way1) / v2 + t1
+        else -> halfWay / v1
     }
 }
 
@@ -105,13 +101,10 @@ fun whichRookThreatens(kingX: Int, kingY: Int,
  * и 3, если угроза есть и от ладьи и от слона.
  * Считать, что ладья и слон не могут загораживать друг друга.
  */
-fun sqr(x: Int) = x * x
-
 fun rookOrBishopThreatens(kingX: Int, kingY: Int,
                           rookX: Int, rookY: Int,
                           bishopX: Int, bishopY: Int): Int {
-    var t: Int
-    t = 0
+    var t = 0
     if ((kingX == rookX) || (kingY == rookY)) {
         t = 1
     }
@@ -130,37 +123,21 @@ fun rookOrBishopThreatens(kingX: Int, kingY: Int,
  * Если такой треугольник не существует, вернуть -1.
  */
 fun triangleKind(a: Double, b: Double, c: Double): Int {
-    val max: Double
     if (a + b <= c || a + c <= b || b + c <= a) {
         return -1
     }
-    if (a > b) {
-        if (a > c) {
-            max = a
-        } else {
-            max = c
-        }
-    } else {
-        if (b > c) {
-            max = b
-        } else {
-            max = c
-        }
-    }
+    val max = Math.max(Math.max(a, b), c)
     val max2 = max * max
     val a2 = a * a
     val b2 = b * b
     val c2 = c * c
     if (max2 == a2 + b2 + c2 - max2) {
         return 1
-    } else {
-        if (max2 > a2 + b2 + c2 - max2) {
-            return 2
-        } else {
-            return 0
-        }
     }
-
+    if (max2 > a2 + b2 + c2 - max2) {
+        return 2
+    }
+    return 0
 }
 
 /**
@@ -171,21 +148,19 @@ fun triangleKind(a: Double, b: Double, c: Double): Int {
  * Найти длину пересечения отрезков AB и CD.
  * Если пересечения нет, вернуть -1.
  */
+
 fun segmentLength(a: Int, b: Int, c: Int, d: Int): Int {
-    if ((b < c) || (d < a)) {
+    if (b < c || d < a) {
         return -1
     }
     if (a <= c) {
-        if (b <= d) {
-            return b - c
-        } else {
-            return d - c
-        }
-    } else {
-        if (b <= d) {
-            return b - a
-        } else {
-            return d - a
+        return when {
+            b <= d -> b - c
+            else -> d - c
         }
     }
+        return when {
+            b <= d -> b - a
+            else -> d - a
+        }
 }

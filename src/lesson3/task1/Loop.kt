@@ -343,8 +343,8 @@ fun squareSequenceDigit(n: Int): Int {
         for (k in 1..amountOfDigits) {
             digitCounter += 1
             if (n == digitCounter) {
-                return when{
-                    number >= 10 -> getDigit(number, amountOfDigits)
+                return when {
+                    amountOfDigits > 1 -> getDigit(number, amountOfDigits)
                     else -> number
                 }
             }
@@ -375,8 +375,8 @@ fun fibSequenceDigit(n: Int): Int {
         for (k in 1..amountOfDigits) {
             digitCounter += 1
             if (n == digitCounter) {
-                return when{
-                    number >= 10 -> getDigit(number, amountOfDigits)
+                return when {
+                    amountOfDigits > 1 -> getDigit(number, amountOfDigits)
                     else -> number
                 }
             }

@@ -2,6 +2,7 @@
 
 package lesson2.task1
 
+import java.util.Comparator
 import lesson1.task1.discriminant
 
 /**
@@ -37,13 +38,11 @@ fun minBiRoot(a: Double, b: Double, c: Double): Double {
 fun ageDescription(age: Int): String {
     if ((age % 10 == 1) && (age % 100 / 10 != 1)) {
         return "$age год"
-    } else {
-        if ((age % 10 in 2..4) && (age % 100 / 10 != 1)) {
-            return "$age года"
-        } else {
-            return "$age лет"
-        }
     }
+    if ((age % 10 in 2..4) && (age % 100 / 10 != 1)) {
+        return "$age года"
+    }
+    return "$age лет"
 }
 
 
@@ -126,7 +125,7 @@ fun triangleKind(a: Double, b: Double, c: Double): Int {
     if (a + b <= c || a + c <= b || b + c <= a) {
         return -1
     }
-    val max = Math.max(Math.max(a, b), c)
+    val max = maxOf(a, b, c)
     val max2 = max * max
     val a2 = a * a
     val b2 = b * b
@@ -159,8 +158,8 @@ fun segmentLength(a: Int, b: Int, c: Int, d: Int): Int {
             else -> d - c
         }
     }
-        return when {
-            b <= d -> b - a
-            else -> d - a
-        }
+    return when {
+        b <= d -> b - a
+        else -> d - a
+    }
 }

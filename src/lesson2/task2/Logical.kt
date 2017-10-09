@@ -2,6 +2,7 @@
 
 package lesson2.task2
 
+import java.util.Comparator
 import lesson1.task1.sqr
 
 /**
@@ -60,9 +61,8 @@ fun circleInside(x1: Double, y1: Double, r1: Double,
  */
 
 fun brickPasses(a: Int, b: Int, c: Int, r: Int, s: Int): Boolean {
-    val brickLength = Math.min(Math.min(a, b), c)
-    val brickHeight = Math.max(Math.max(a, b), c)
-    val brickWidth = a + b + c - brickHeight - brickLength
+    val brickLength = minOf(a, b, c)
+    val brickWidth = a + b + c - maxOf(a, b, c) - brickLength
     val holeLength = Math.min(s, r)
     val holeWidth = Math.max(s, r)
     return brickWidth <= holeWidth && brickLength <= holeLength

@@ -82,8 +82,8 @@ fun fib(n: Int): Int {
     var fib1 = 1
     var fib2 = 1
     var fib3 = 0
-    when {
-        n == 1 || n == 2 -> return 1
+    if (n == 1 || n == 2) {
+        return 1
     }
     for (i in 3..n) {
         fib3 = fib1 + fib2
@@ -100,10 +100,11 @@ fun fib(n: Int): Int {
  * минимальное число k, которое делится и на m и на n без остатка
  */
 fun lcm(m: Int, n: Int): Int {
-    var max = Math.max(m, n)
+    val max = Math.max(m, n)
     for (i in max..m * n) {
-        if ((i % m == 0) && (i % n == 0))
+        if ((i % m == 0) && (i % n == 0)) {
             return i
+        }
     }
     return -1
 }
@@ -127,12 +128,12 @@ fun minDivisor(n: Int): Int {
  * Для заданного числа n > 1 найти максимальный делитель, меньший n
  */
 fun maxDivisor(n: Int): Int {
-    var max: Int = 1
-    for (i in 1 until n) {
-        if (n % i == 0)
-            max = i
+    for (i in n downTo 1) {
+        if (n % i == 0) {
+            return i
+        }
     }
-    return max
+    return -1
 }
 
 /**
@@ -159,10 +160,12 @@ fun isCoPrime(m: Int, n: Int): Boolean {
  * Например, для интервала 21..28 21 <= 5*5 <= 28, а для интервала 51..61 квадрата не существует.
  */
 fun squareBetweenExists(m: Int, n: Int): Boolean {
-    for (i in m..n) {
-        if (Math.sqrt(i.toDouble()).toInt().toDouble() == Math.sqrt(i.toDouble())) {
+    var number = 1.0
+    while (number * number <= n) {
+        if (number * number >= m) {
             return true
         }
+        number++
     }
     return false
 }
@@ -182,33 +185,21 @@ fun sc(a: Double, n: Int): Double {
 }
 
 fun sin(x: Double, eps: Double): Double {
-    var exprPart: Double = eps
+    var exprPart: Double = x
     var result: Double = 0.0
     var k: Int = 1
-    var xx: Double
-    var factorial: Double
-    var z: Int = 0
-    var xn = x
-    while (xn > 2 * Math.PI) {
-        xn -= 2 * Math.PI
-    }
-    while (xn < -2 * Math.PI) {
-        xn += 2 * Math.PI
-    }
+    var factorial = 1.0
+    var xx = 1.0 / x
+    val xn = x % (2 * Math.PI)
     while (Math.abs(exprPart) >= eps) {
-        factorial = 1.0
-        for (i in 2..k) {
-            factorial *= i
-        }
-        xx = sc(xn, k)
+        xx *= xn * xn
         exprPart = xx / factorial
+        if ((k - 1) / 2 % 2 == 0)
+            result += exprPart
+        else
+            result -= exprPart
         k += 2
-        if (Math.abs(exprPart) >= eps)
-            if (z % 2 == 0)
-                result += exprPart
-            else
-                result -= exprPart
-        z++
+        factorial *= (k - 1) * k
     }
     return result
 }
@@ -221,35 +212,25 @@ fun sin(x: Double, eps: Double): Double {
  * Нужную точность считать достигнутой, если очередной член ряда меньше eps по модулю
  */
 fun cos(x: Double, eps: Double): Double {
-    var exprPart: Double = eps
+    var exprPart: Double = 1.0
     var result: Double = 0.0
     var k: Int = 0
-    var xx: Double
-    var factorial: Double
-    var z: Int = 0
-    var xn = x
-    while (xn > 2 * Math.PI) {
-        xn -= 2 * Math.PI
-    }
-    while (xn < -2 * Math.PI) {
-        xn += 2 * Math.PI
-    }
-    while (exprPart >= eps) {
-        factorial = 1.0
-        for (i in 2..k) {
-            factorial *= i
-        }
-        xx = sc(xn, k)
-        exprPart = xx / factorial
-        k += 2
-        if (z % 2 == 0)
+    var factorial = 1.0
+    val xn = x % (2 * Math.PI)
+    var xx = 1.0
+    while (Math.abs(exprPart) >= eps) {
+        if (k / 2 % 2 == 0)
             result += exprPart
         else
             result -= exprPart
-        z++
+        k += 2
+        factorial *= (k - 1) * k
+        xx *= xn * xn
+        exprPart = xx / factorial
     }
     return result
 }
+
 
 /**
  * Средняя

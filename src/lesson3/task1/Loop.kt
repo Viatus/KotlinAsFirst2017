@@ -185,21 +185,21 @@ fun sc(a: Double, n: Int): Double {
 }
 
 fun sin(x: Double, eps: Double): Double {
-    var exprPart: Double = x
     var result: Double = 0.0
     var k: Int = 1
     var factorial = 1.0
-    var xx = 1.0 / x
     val xn = x % (2 * Math.PI)
+    var xx = xn
+    var exprPart: Double = xn
     while (Math.abs(exprPart) >= eps) {
-        xx *= xn * xn
-        exprPart = xx / factorial
         if ((k - 1) / 2 % 2 == 0)
             result += exprPart
         else
             result -= exprPart
         k += 2
         factorial *= (k - 1) * k
+        xx *= xn * xn
+        exprPart = xx / factorial
     }
     return result
 }

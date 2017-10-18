@@ -287,7 +287,18 @@ fun decimal(digits: List<Int>, base: Int): Int {
  * 10 -> a, 11 -> b, 12 -> c и так далее.
  * Например: str = "13c", base = 14 -> 250
  */
-fun decimalFromString(str: String, base: Int): Int = TODO()
+fun decimalFromString(str: String, base: Int): Int {
+    var basePow = 1
+    var number = 0
+    for (i in str.length - 1 downTo 0) {
+        when {
+            str[i].toInt() in 48..57 -> number += (str[i].toInt() - 48) * basePow
+            str[i].toInt() in 97..122 -> number += (str[i].toInt() - 87) * basePow
+        }
+        basePow *= base
+    }
+    return number
+}
 
 /**
  * Сложная
@@ -297,7 +308,93 @@ fun decimalFromString(str: String, base: Int): Int = TODO()
  * 90 = XC, 100 = C, 400 = CD, 500 = D, 900 = CM, 1000 = M.
  * Например: 23 = XXIII, 44 = XLIV, 100 = C
  */
-fun roman(n: Int): String = TODO()
+fun roman(n: Int): String {
+    var rom = ""
+    var counter = 0
+    var number = n
+    while (number % 10 != 0) {
+        when {
+            number % 10 in 1..3 -> {
+                for (i in 1..number % 10) {
+                    rom += "I"
+                    number -= 1
+                }
+            }
+            number % 10 == 4 -> {
+                rom += "VI"
+                number -= 4
+            }
+            number % 10 in 6..8 -> {
+                for (i in 1..number % 10 - 5) {
+                    rom += "I"
+                }
+                number -= number % 10
+                rom += "V"
+            }
+            number % 10 == 9 -> {
+                number -= 9
+                rom += "XI"
+            }
+        }
+    }
+    number /= 10
+    while (number % 10 != 0) {
+        when {
+            number % 10 in 1..3 -> {
+                for (i in 1..number % 10) {
+                    rom += "X"
+                    number -= 1
+                }
+            }
+            number % 10 == 4 -> {
+                rom += "LX"
+                number -= 4
+            }
+            number % 10 in 6..8 -> {
+                for (i in 1..number % 10 - 5) {
+                    rom += "X"
+                }
+                number -= number % 10
+                rom += "L"
+            }
+            number % 10 == 9 -> {
+                number -= 9
+                rom += "CX"
+            }
+        }
+    }
+    number /= 10
+    while (number % 10 != 0) {
+        when {
+            number % 10 in 1..3 -> {
+                for (i in 1..number % 10) {
+                    rom += "C"
+                    number -= 1
+                }
+            }
+            number % 10 == 4 -> {
+                rom += "DC"
+                number -= 4
+            }
+            number % 10 in 6..8 -> {
+                for (i in 1..number % 10 - 5) {
+                    rom += "C"
+                }
+                number -= number % 10
+                rom += "D"
+            }
+            number % 10 == 9 -> {
+                number -= 9
+                rom += "MC"
+            }
+        }
+    }
+    for (i in 1..number / 10) {
+        rom += "M"
+    }
+    return rom.reversed()
+
+}
 
 /**
  * Очень сложная

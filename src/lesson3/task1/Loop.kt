@@ -101,12 +101,12 @@ fun fib(n: Int): Int {
  */
 fun lcm(m: Int, n: Int): Int {
     val max = Math.max(m, n)
-    for (i in max..m * n) {
+    for (i in max until m * n) {
         if ((i % m == 0) && (i % n == 0)) {
             return i
         }
     }
-    return -1
+    return m * n
 }
 
 /**
@@ -128,12 +128,12 @@ fun minDivisor(n: Int): Int {
  * Для заданного числа n > 1 найти максимальный делитель, меньший n
  */
 fun maxDivisor(n: Int): Int {
-    for (i in n - 1 downTo 1) {
+    for (i in n - 1 downTo 2) {
         if (n % i == 0) {
             return i
         }
     }
-    return -1
+    return 1
 }
 
 /**
@@ -144,7 +144,7 @@ fun maxDivisor(n: Int): Int {
  * Например, 25 и 49 взаимно простые, а 6 и 8 -- нет.
  */
 fun isCoPrime(m: Int, n: Int): Boolean {
-    var min = Math.min(m, n)
+    val min = Math.min(m, n)
     for (i in 2..min) {
         if ((m % i == 0) && (n % i == 0))
             return false
@@ -160,7 +160,7 @@ fun isCoPrime(m: Int, n: Int): Boolean {
  * Например, для интервала 21..28 21 <= 5*5 <= 28, а для интервала 51..61 квадрата не существует.
  */
 fun squareBetweenExists(m: Int, n: Int): Boolean {
-    var number = 0.0
+    var number = Math.sqrt(m.toDouble()).toInt().toDouble()
     while (number * number <= n) {
         if (number * number >= m) {
             return true
@@ -245,25 +245,16 @@ fun scint(a: Int, n: Int): Int {
     return b
 }
 
-fun numberOfDigits(number: Int): Int {
-    var a = number
-    var counter = 0
-    while (a > 0) {
-        counter++
-        a /= 10
-    }
-    return counter
-}
-
 fun revert(n: Int): Int {
     var number: Int = n
-    var amountOfDigits = numberOfDigits(number)
-    var digit: Int
-    var newNumber: Int = 0
+    val amountOfDigits = digitNumber(number)
+    var newNumber = 0
+    var tenPow = scint(10, amountOfDigits - 1)
     for (i in 1..amountOfDigits) {
-        digit = number % 10
+        val digit = number % 10
         number /= 10
-        newNumber += digit * scint(10, (amountOfDigits - i))
+        newNumber += digit * tenPow
+        tenPow /= 10
     }
     return newNumber
 }
@@ -277,13 +268,15 @@ fun revert(n: Int): Int {
  */
 fun isPalindrome(n: Int): Boolean {
     var number: Int = n
-    var amountOfDigits = numberOfDigits(number)
+    val amountOfDigits = digitNumber(number)
+    var tenPow = scint(10, amountOfDigits - 1)
     while (number >= 10) {
-        if (number / scint(10, amountOfDigits - 1) != number % 10)
+        if (number / tenPow != number % 10) {
             return false
-        number %= scint(10, amountOfDigits - 1)
+        }
+        number %= tenPow
         number /= 10
-        amountOfDigits -= 2
+        tenPow /= 100
     }
     return true
 }
@@ -295,7 +288,7 @@ fun isPalindrome(n: Int): Boolean {
  * Например, 54 и 323 состоят из разных цифр, а 111 и 0 из одинаковых.
  */
 fun hasDifferentDigits(n: Int): Boolean {
-    var digit = n % 10
+    val digit = n % 10
     var number = n / 10
     while (number > 0) {
         if (digit != number % 10) {
@@ -314,37 +307,23 @@ fun hasDifferentDigits(n: Int): Boolean {
  * Например, 2-я цифра равна 4, 7-я 5, 12-я 6.
  */
 
-fun getDigit(number: Int, amountOfDigits: Int): Int {
-    var numberReplica = number
-    for (i in 1 until amountOfDigits) {
-        numberReplica /= 10
-    }
-    return numberReplica
-}
-
 fun squareSequenceDigit(n: Int): Int {
     var flag: Boolean = true
-    var number = 0
     var i = 1
-    var digitCounter: Int = 0
-    var amountOfDigits: Int
+    var digit = 0
+    var digitCounter = 0
     while (flag) {
-        number = i * i
-        amountOfDigits = numberOfDigits(number)
-        for (k in 1..amountOfDigits) {
-            digitCounter += 1
-            if (n == digitCounter) {
-                return when {
-                    amountOfDigits > 1 -> getDigit(number, amountOfDigits)
-                    else -> number
-                }
-            }
-            number %= scint(10, amountOfDigits - 1)
-            amountOfDigits--
+        val number = i * i
+        val amountOfDigits = digitNumber(number)
+        if (digitCounter + amountOfDigits >= n) {
+            digit = number / scint(10, amountOfDigits - n + digitCounter) % 10
+            flag = false
+        } else {
+            digitCounter += amountOfDigits
         }
         i++
     }
-    return -1
+    return digit
 }
 
 /**
@@ -355,27 +334,21 @@ fun squareSequenceDigit(n: Int): Int {
  * Например, 2-я цифра равна 1, 9-я 2, 14-я 5.
  */
 fun fibSequenceDigit(n: Int): Int {
-    var flag = true
-    var number = 0
+    var flag: Boolean = true
     var i = 1
+    var digit = 0
     var digitCounter = 0
-    var amountOfDigits: Int
     while (flag) {
-        number = fib(i)
-        amountOfDigits = numberOfDigits(number)
-        for (k in 1..amountOfDigits) {
-            digitCounter += 1
-            if (n == digitCounter) {
-                return when {
-                    amountOfDigits > 1 -> getDigit(number, amountOfDigits)
-                    else -> number
-                }
-            }
-            number %= scint(10, amountOfDigits - 1)
-            amountOfDigits--
+        val number = fib(i)
+        val amountOfDigits = digitNumber(number)
+        if (digitCounter + amountOfDigits >= n) {
+            digit = number / scint(10, amountOfDigits - n + digitCounter) % 10
+            flag = false
+        } else {
+            digitCounter += amountOfDigits
         }
         i++
     }
-    return -1
+    return digit
 }
 

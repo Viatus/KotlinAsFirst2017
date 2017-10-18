@@ -1,5 +1,4 @@
 @file:Suppress("UNUSED_PARAMETER")
-
 package lesson4.task1
 
 import lesson1.task1.discriminant
@@ -107,25 +106,14 @@ fun buildSumExample(list: List<Int>) = list.joinToString(separator = " + ", post
  * по формуле abs = sqrt(a1^2 + a2^2 + ... + aN^2).
  * Модуль пустого вектора считать равным 0.0.
  */
-fun abs(v: List<Double>): Double {
-    var sum = 0.0
-    for (element in v) {
-        sum += element * element
-    }
-    return Math.sqrt(sum)
-}
+fun abs(v: List<Double>): Double = TODO()
 
 /**
  * Простая
  *
  * Рассчитать среднее арифметическое элементов списка list. Вернуть 0.0, если список пуст
  */
-fun mean(list: List<Double>): Double {
-    if (list.isEmpty()) {
-        return 0.0
-    }
-    return list.sum() / list.size
-}
+fun mean(list: List<Double>): Double = TODO()
 
 /**
  * Средняя
@@ -135,16 +123,7 @@ fun mean(list: List<Double>): Double {
  *
  * Обратите внимание, что данная функция должна изменять содержание списка list, а не его копии.
  */
-fun center(list: MutableList<Double>): MutableList<Double> {
-    if (list.isEmpty()) {
-        return list
-    }
-    val average = list.sum() / list.size
-    for (i in 0 until list.size) {
-        list[i] -= average
-    }
-    return list
-}
+fun center(list: MutableList<Double>): MutableList<Double> = TODO()
 
 /**
  * Средняя
@@ -153,16 +132,7 @@ fun center(list: MutableList<Double>): MutableList<Double> {
  * представленные в виде списков a и b. Скалярное произведение считать по формуле:
  * C = a1b1 + a2b2 + ... + aNbN. Произведение пустых векторов считать равным 0.0.
  */
-fun times(a: List<Double>, b: List<Double>): Double {
-    if (a.isEmpty() || b.isEmpty()) {
-        return 0.0
-    }
-    var c = 0.0
-    for (i in 0 until a.size) {
-        c += a[i] * b[i]
-    }
-    return c
-}
+fun times(a: List<Double>, b: List<Double>): Double = TODO()
 
 /**
  * Средняя
@@ -172,16 +142,7 @@ fun times(a: List<Double>, b: List<Double>): Double {
  * Коэффициенты многочлена заданы списком p: (p0, p1, p2, p3, ..., pN).
  * Значение пустого многочлена равно 0.0 при любом x.
  */
-fun polynom(p: List<Double>, x: Double): Double {
-    if (p.isEmpty()) {
-        return 0.0
-    }
-    var sum = p.first()
-    for (i in 1 until p.size) {
-        sum += p[i] * Math.pow(x, i.toDouble())
-    }
-    return sum
-}
+fun polynom(p: List<Double>, x: Double): Double = TODO()
 
 /**
  * Средняя
@@ -193,17 +154,7 @@ fun polynom(p: List<Double>, x: Double): Double {
  *
  * Обратите внимание, что данная функция должна изменять содержание списка list, а не его копии.
  */
-fun accumulate(list: MutableList<Double>): MutableList<Double> {
-    if (list.isEmpty()) {
-        return list
-    }
-    for (i in list.size - 1 downTo 1) {
-        for (j in i - 1 downTo 0) {
-            list[i] += list[j]
-        }
-    }
-    return list
-}
+fun accumulate(list: MutableList<Double>): MutableList<Double> = TODO()
 
 /**
  * Средняя
@@ -229,15 +180,7 @@ fun factorizeToString(n: Int): String = TODO()
  * Результат перевода вернуть в виде списка цифр в base-ичной системе от старшей к младшей,
  * например: n = 100, base = 4 -> (1, 2, 1, 0) или n = 250, base = 14 -> (1, 3, 12)
  */
-fun convert(n: Int, base: Int): List<Int> {
-    var list = mutableListOf<Int>()
-    var nReplica = n
-    while (nReplica > 0) {
-        list.add(nReplica % base)
-        nReplica /= base
-    }
-    return list.reversed()
-}
+fun convert(n: Int, base: Int): List<Int> = TODO()
 
 /**
  * Сложная
@@ -247,21 +190,7 @@ fun convert(n: Int, base: Int): List<Int> {
  * строчными буквами: 10 -> a, 11 -> b, 12 -> c и так далее.
  * Например: n = 100, base = 4 -> 1210, n = 250, base = 14 -> 13c
  */
-fun numberToString(n: Int): String {
-    if (n in 0 until 10) {
-        return n.toString()
-    }
-    return (87 + n).toChar().toString()
-}
-
-fun convertToString(n: Int, base: Int): String {
-    val listOfDigits = convert(n, base)
-    var number = ""
-    for (elements in listOfDigits) {
-        number += numberToString(elements)
-    }
-    return number
-}
+fun convertToString(n: Int, base: Int): String = TODO()
 
 /**
  * Средняя
@@ -270,13 +199,7 @@ fun convertToString(n: Int, base: Int): String {
  * из системы счисления с основанием base в десятичную.
  * Например: digits = (1, 3, 12), base = 14 -> 250
  */
-fun decimal(digits: List<Int>, base: Int): Int {
-    var number = 0
-    for (i in 0 until digits.size) {
-        number += digits[i] * Math.pow(base.toDouble(), (digits.size - i - 1).toDouble()).toInt()
-    }
-    return number
-}
+fun decimal(digits: List<Int>, base: Int): Int = TODO()
 
 /**
  * Сложная
@@ -287,18 +210,7 @@ fun decimal(digits: List<Int>, base: Int): Int {
  * 10 -> a, 11 -> b, 12 -> c и так далее.
  * Например: str = "13c", base = 14 -> 250
  */
-fun decimalFromString(str: String, base: Int): Int {
-    var basePow = 1
-    var number = 0
-    for (i in str.length - 1 downTo 0) {
-        when {
-            str[i].toInt() in 48..57 -> number += (str[i].toInt() - 48) * basePow
-            str[i].toInt() in 97..122 -> number += (str[i].toInt() - 87) * basePow
-        }
-        basePow *= base
-    }
-    return number
-}
+fun decimalFromString(str: String, base: Int): Int = TODO()
 
 /**
  * Сложная
@@ -308,93 +220,7 @@ fun decimalFromString(str: String, base: Int): Int {
  * 90 = XC, 100 = C, 400 = CD, 500 = D, 900 = CM, 1000 = M.
  * Например: 23 = XXIII, 44 = XLIV, 100 = C
  */
-fun roman(n: Int): String {
-    var rom = ""
-    var counter = 0
-    var number = n
-    while (number % 10 != 0) {
-        when {
-            number % 10 in 1..3 -> {
-                for (i in 1..number % 10) {
-                    rom += "I"
-                    number -= 1
-                }
-            }
-            number % 10 == 4 -> {
-                rom += "VI"
-                number -= 4
-            }
-            number % 10 in 6..8 -> {
-                for (i in 1..number % 10 - 5) {
-                    rom += "I"
-                }
-                number -= number % 10
-                rom += "V"
-            }
-            number % 10 == 9 -> {
-                number -= 9
-                rom += "XI"
-            }
-        }
-    }
-    number /= 10
-    while (number % 10 != 0) {
-        when {
-            number % 10 in 1..3 -> {
-                for (i in 1..number % 10) {
-                    rom += "X"
-                    number -= 1
-                }
-            }
-            number % 10 == 4 -> {
-                rom += "LX"
-                number -= 4
-            }
-            number % 10 in 6..8 -> {
-                for (i in 1..number % 10 - 5) {
-                    rom += "X"
-                }
-                number -= number % 10
-                rom += "L"
-            }
-            number % 10 == 9 -> {
-                number -= 9
-                rom += "CX"
-            }
-        }
-    }
-    number /= 10
-    while (number % 10 != 0) {
-        when {
-            number % 10 in 1..3 -> {
-                for (i in 1..number % 10) {
-                    rom += "C"
-                    number -= 1
-                }
-            }
-            number % 10 == 4 -> {
-                rom += "DC"
-                number -= 4
-            }
-            number % 10 in 6..8 -> {
-                for (i in 1..number % 10 - 5) {
-                    rom += "C"
-                }
-                number -= number % 10
-                rom += "D"
-            }
-            number % 10 == 9 -> {
-                number -= 9
-                rom += "MC"
-            }
-        }
-    }
-    for (i in 1..number / 10) {
-        rom += "M"
-    }
-    return rom.reversed()
-
-}
+fun roman(n: Int): String = TODO()
 
 /**
  * Очень сложная

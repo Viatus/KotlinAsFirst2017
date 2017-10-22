@@ -100,12 +100,13 @@ fun fib(n: Int): Int {
  * минимальное число k, которое делится и на m и на n без остатка
  */
 
-fun gcd(a : Int, b : Int) : Int {
-    if (b==0){
+fun gcd(a: Int, b: Int): Int {
+    if (b == 0) {
         return a
     }
     return gcd(b, a % b)
 }
+
 fun lcm(m: Int, n: Int): Int = n * m / gcd(n, m)
 
 
@@ -160,7 +161,7 @@ fun isCoPrime(m: Int, n: Int): Boolean {
  * Например, для интервала 21..28 21 <= 5*5 <= 28, а для интервала 51..61 квадрата не существует.
  */
 fun squareBetweenExists(m: Int, n: Int): Boolean {
-    var number = Math.sqrt(m.toDouble()).toInt().toDouble()
+    var number = Math.round(Math.sqrt(m.toDouble()))
     while (number * number <= n) {
         if (number * number >= m) {
             return true

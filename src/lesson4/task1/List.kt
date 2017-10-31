@@ -449,7 +449,7 @@ fun russian(n: Int): String {
         if (numberThousand / 10 % 10 != 1 || numberThousand % 10 == 0)
             rus += placeSpace(rus) + when (rank) {
                 0, in 5..9 -> "тысяч"
-                in 2..3 -> "тысячи"
+                in 2..4 -> "тысячи"
                 else -> "тысяча"
             } else {
             rus += placeSpace(rus) + "тысяч"

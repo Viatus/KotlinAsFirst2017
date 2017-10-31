@@ -397,8 +397,8 @@ fun teenNumberName(number: Int): String {
 }
 
 fun digitName(n: Int): String {
-    val digits = listOf("один", "два", "три", "четыре", "пять", "шесть", "семь", "восемь", "девять", "десять")
-    return digits[n - 1]
+    val digits = listOf("", "один", "два", "три", "четыре", "пять", "шесть", "семь", "восемь", "девять", "десять")
+    return digits[n]
 }
 
 fun hundredName(number: Int, isThousand: Boolean): String {
@@ -427,7 +427,9 @@ fun hundredName(number: Int, isThousand: Boolean): String {
         return rusHundred
     }
     if (!isThousand) {
-        rusHundred += placeSpace(rusHundred) + digitName(numberRank)
+        if (numberRank != 0) {
+            rusHundred += placeSpace(rusHundred) + digitName(numberRank)
+        }
     } else {
         rusHundred += placeSpace(rusHundred) + when (numberRank) {
             in 3..9 -> digitName(numberRank)

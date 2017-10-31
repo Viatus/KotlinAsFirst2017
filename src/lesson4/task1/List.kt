@@ -234,7 +234,7 @@ fun factorize(n: Int): List<Int> {
  * Результат разложения вернуть в виде строки, например 75 -> 3*5*5
  */
 fun factorizeToString(n: Int): String {
-    return factorize(n).joinToString (separator = "*")
+    return factorize(n).joinToString(separator = "*")
 }
 
 /**
@@ -245,6 +245,9 @@ fun factorizeToString(n: Int): String {
  * например: n = 100, base = 4 -> (1, 2, 1, 0) или n = 250, base = 14 -> (1, 3, 12)
  */
 fun convert(n: Int, base: Int): List<Int> {
+    if (n == 0) {
+        return listOf(0)
+    }
     val list = mutableListOf<Int>()
     var nReplica = n
     while (nReplica > 0) {
@@ -271,6 +274,9 @@ fun numberToString(n: Int): String {
 }
 
 fun convertToString(n: Int, base: Int): String {
+    if (n == 0) {
+        return "0"
+    }
     val listOfDigits = convert(n, base)
     var number = ""
     for (elements in listOfDigits) {
@@ -326,22 +332,24 @@ fun decimalFromString(str: String, base: Int): Int {
  */
 fun romanPart(number: Int, unit: String, five: String, decade: String): String {
     var rom = ""
-    when {
-        number % 10 in 1..3 -> {
-            for (i in 1..number % 10) {
+    val numberUnit = number % 10
+    when (numberUnit) {
+        5 -> rom += five
+        in 1..3 -> {
+            for (i in 1..numberUnit) {
                 rom += unit
             }
         }
-        number % 10 == 4 -> {
+        4 -> {
             rom += five + unit
         }
-        number % 10 in 6..8 -> {
-            for (i in 1..number % 10 - 5) {
+        in 6..8 -> {
+            for (i in 1..numberUnit - 5) {
                 rom += unit
             }
             rom += five
         }
-        number % 10 == 9 -> {
+        9 -> {
             rom += decade + unit
         }
     }
@@ -407,8 +415,9 @@ fun hundredName(number: Int, isThousand: Boolean): String {
     val numberRank = number % 10
     if (numberDecade != 1 || numberRank == 0) {
         rusHundred += when (numberDecade) {
-            in 5..9 -> placeSpace(rusHundred) + digitName(numberDecade) + "десят"
+            in 5..8 -> placeSpace(rusHundred) + digitName(numberDecade) + "десят"
             in 2..3 -> placeSpace(rusHundred) + digitName(numberDecade) + "дцать"
+            9 -> placeSpace(rusHundred) + "девяносто"
             4 -> placeSpace(rusHundred) + "сорок"
             1 -> placeSpace(rusHundred) + "десять"
             else -> ""

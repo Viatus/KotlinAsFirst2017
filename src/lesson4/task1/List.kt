@@ -194,9 +194,7 @@ fun polynom(p: List<Double>, x: Double): Double {
  * Обратите внимание, что данная функция должна изменять содержание списка list, а не его копии.
  */
 fun accumulate(list: MutableList<Double>): MutableList<Double> {
-    if (list.isEmpty()) {
-        return list
-    }
+    if (list.isEmpty()) return list
     for (i in list.size - 1 downTo 1) {
         for (j in i - 1 downTo 0) {
             list[i] += list[j]
@@ -233,9 +231,8 @@ fun factorize(n: Int): List<Int> {
  * Разложить заданное натуральное число n > 1 на простые множители.
  * Результат разложения вернуть в виде строки, например 75 -> 3*5*5
  */
-fun factorizeToString(n: Int): String {
-    return factorize(n).joinToString(separator = "*")
-}
+fun factorizeToString(n: Int): String = factorize(n).joinToString(separator = "*")
+
 
 /**
  * Средняя
@@ -266,11 +263,10 @@ fun convert(n: Int, base: Int): List<Int> {
  * Например: n = 100, base = 4 -> 1210, n = 250, base = 14 -> 13c
  */
 fun numberToString(n: Int): String {
-    val codeDifference = 87
     if (n in 0 until 10) {
         return n.toString()
     }
-    return (codeDifference + n).toChar().toString()
+    return ('a' + n - 10).toString()
 }
 
 fun convertToString(n: Int, base: Int): String {
@@ -278,11 +274,11 @@ fun convertToString(n: Int, base: Int): String {
         return "0"
     }
     val listOfDigits = convert(n, base)
-    var number = ""
+    val number = StringBuilder("")
     for (elements in listOfDigits) {
-        number += numberToString(elements)
+        number.append(numberToString(elements))
     }
-    return number
+    return number.toString()
 }
 
 /**
@@ -314,8 +310,8 @@ fun decimalFromString(str: String, base: Int): Int {
     var number = 0
     for (i in str.length - 1 downTo 0) {
         when {
-            str[i].toInt() in 48..57 -> number += (str[i].toInt() - 48) * basePow
-            str[i].toInt() in 97..122 -> number += (str[i].toInt() - 87) * basePow
+            str[i] in '0'..'9' -> number += (str[i] - '0') * basePow
+            str[i] in 'a'..'z' -> number += (str[i] - 'a' + 10) * basePow
         }
         basePow *= base
     }
@@ -331,43 +327,40 @@ fun decimalFromString(str: String, base: Int): Int {
  * Например: 23 = XXIII, 44 = XLIV, 100 = C
  */
 fun romanPart(number: Int, unit: String, five: String, decade: String): String {
-    var rom = ""
     val numberUnit = number % 10
-    when (numberUnit) {
-        5 -> rom += five
-        in 1..3 -> {
-            for (i in 1..numberUnit) {
-                rom += unit
-            }
-        }
-        4 -> {
-            rom += five + unit
-        }
-        in 6..8 -> {
-            for (i in 1..numberUnit - 5) {
-                rom += unit
-            }
-            rom += five
-        }
-        9 -> {
-            rom += decade + unit
-        }
+    return when (numberUnit) {
+        1 -> unit
+        2 -> unit + unit
+        3 -> unit + unit + unit
+        4 -> five + unit
+        6 -> unit + five
+        7 -> unit + unit + five
+        8 -> unit + unit + unit + five
+        5 -> five
+        9 -> decade + unit
+        else -> ""
     }
-    return rom
 }
 
 fun roman(n: Int): String {
-    var rom = ""
-    var number = n
-    rom += romanPart(number, "I", "V", "X")
-    number /= 10
-    rom += romanPart(number, "X", "L", "C")
-    number /= 10
-    rom += romanPart(number, "C", "D", "M")
-    for (i in 1..number / 10) {
-        rom += "M"
+    val rom = StringBuilder("")
+    val alphabet = listOf<String>("I", "V", "X", "L", "C", "D", "M")
+    var numberHundred = n % 1000
+    val numberThousand = n / 1000
+    var unit = 0
+    var five = 1
+    var decade = 2
+    while (numberHundred > 0) {
+        rom.append(romanPart(numberHundred, alphabet[unit], alphabet[five], alphabet[decade]))
+        numberHundred /= 10
+        unit += 2
+        five += 2
+        decade += 2
     }
-    return rom.reversed()
+    for (i in 1..numberThousand) {
+        rom.append("M")
+    }
+    return rom.reversed().toString()
 }
 
 /**
@@ -396,70 +389,68 @@ fun teenNumberName(number: Int): String {
     }
 }
 
-fun digitName(n: Int): String {
-    val digits = listOf("", "один", "два", "три", "четыре", "пять", "шесть", "семь", "восемь", "девять", "десять")
-    return digits[n]
-}
+fun digitName(n: Int): String = listOf("", "один", "два", "три", "четыре", "пять", "шесть", "семь", "восемь", "девять", "десять")[n]
+
 
 fun hundredName(number: Int, isThousand: Boolean): String {
-    var rusHundred = ""
+    val rusHundred = StringBuilder("")
     val numberHundred = number / 100
-    rusHundred += when (numberHundred) {
+    rusHundred.append(when (numberHundred) {
         in 5..9 -> digitName(numberHundred) + "сот"
         in 3..4 -> digitName(numberHundred) + "ста"
         1 -> "сто"
         2 -> "двести"
         else -> ""
-    }
+    })
     val numberDecade = number / 10 % 10
     val numberRank = number % 10
     if (numberDecade != 1 || numberRank == 0) {
-        rusHundred += when (numberDecade) {
-            in 5..8 -> placeSpace(rusHundred) + digitName(numberDecade) + "десят"
-            in 2..3 -> placeSpace(rusHundred) + digitName(numberDecade) + "дцать"
-            9 -> placeSpace(rusHundred) + "девяносто"
-            4 -> placeSpace(rusHundred) + "сорок"
-            1 -> placeSpace(rusHundred) + "десять"
+        rusHundred.append(when (numberDecade) {
+            in 5..8 -> placeSpace(rusHundred.toString()) + digitName(numberDecade) + "десят"
+            in 2..3 -> placeSpace(rusHundred.toString()) + digitName(numberDecade) + "дцать"
+            9 -> placeSpace(rusHundred.toString()) + "девяносто"
+            4 -> placeSpace(rusHundred.toString()) + "сорок"
+            1 -> placeSpace(rusHundred.toString()) + "десять"
             else -> ""
-        }
+        })
     } else {
-        rusHundred += placeSpace(rusHundred) + teenNumberName(numberRank)
-        return rusHundred
+        rusHundred.append(placeSpace(rusHundred.toString()) + teenNumberName(numberRank))
+        return rusHundred.toString()
     }
     if (!isThousand) {
         if (numberRank != 0) {
-            rusHundred += placeSpace(rusHundred) + digitName(numberRank)
+            rusHundred.append(placeSpace(rusHundred.toString()) + digitName(numberRank))
         }
     } else {
-        rusHundred += placeSpace(rusHundred) + when (numberRank) {
+        rusHundred.append(placeSpace(rusHundred.toString()) + when (numberRank) {
             in 3..9 -> digitName(numberRank)
             2 -> "две"
             1 -> "одна"
             else -> ""
-        }
+        })
     }
-    return rusHundred
+    return rusHundred.toString()
 }
 
 fun russian(n: Int): String {
-    var rus = ""
+    val rus = StringBuilder("")
     var number = n
     if (number > 999) {
         val numberThousand = number / 1000
-        rus += hundredName(numberThousand, true)
+        rus.append(hundredName(numberThousand, true))
         val rank = numberThousand % 10
         if (numberThousand / 10 % 10 != 1 || numberThousand % 10 == 0)
-            rus += placeSpace(rus) + when (rank) {
+            rus.append(placeSpace(rus.toString()) + when (rank) {
                 0, in 5..9 -> "тысяч"
                 in 2..4 -> "тысячи"
                 else -> "тысяча"
-            } else {
-            rus += placeSpace(rus) + "тысяч"
+            }) else {
+            rus.append(placeSpace(rus.toString()) + "тысяч")
         }
         number %= 1000
     }
     if (number != 0) {
-        rus += placeSpace(rus) + hundredName(number, false)
+        rus.append(placeSpace(rus.toString()) + hundredName(number, false))
     }
-    return rus
+    return rus.toString()
 }

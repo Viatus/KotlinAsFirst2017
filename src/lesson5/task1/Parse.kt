@@ -1,4 +1,5 @@
 @file:Suppress("UNUSED_PARAMETER")
+
 package lesson5.task1
 
 /**
@@ -48,12 +49,10 @@ fun main(args: Array<String>) {
         val seconds = timeStrToSeconds(line)
         if (seconds == -1) {
             println("Введённая строка $line не соответствует формату ЧЧ:ММ:СС")
-        }
-        else {
+        } else {
             println("Прошло секунд с начала суток: $seconds")
         }
-    }
-    else {
+    } else {
         println("Достигнут <конец файла> в процессе чтения строки. Программа прервана")
     }
 }
@@ -66,7 +65,19 @@ fun main(args: Array<String>) {
  * День и месяц всегда представлять двумя цифрами, например: 03.04.2011.
  * При неверном формате входной строки вернуть пустую строку
  */
-fun dateStrToDigit(str: String): String = TODO()
+fun dateStrToDigit(str: String): String {
+    val parts = str.split(" ")
+    val monthNumbers = mapOf("января" to 1, "февраля" to 2, "марта" to 3, "апреля" to 4, "мая" to 5, "июня" to 6,
+            "июля" to 7, "августа" to 8, "сентября" to 9, "октября" to 10, "ноября" to 11, "декабря" to 12)
+    try {
+        if (parts[0].toInt() !in 1..31 || monthNumbers[parts[1]] == null || parts[2].toInt() < 0 || parts.size != 3) {
+            return ""
+        }
+        return String.format("%02d.%02d.%s", parts[0].toInt(), monthNumbers[parts[1]], parts[2])
+    } catch (e: IndexOutOfBoundsException) {
+        return ""
+    }
+}
 
 /**
  * Средняя
@@ -75,7 +86,21 @@ fun dateStrToDigit(str: String): String = TODO()
  * Перевести её в строковый формат вида "15 июля 2016".
  * При неверном формате входной строки вернуть пустую строку
  */
-fun dateDigitToStr(digital: String): String = TODO()
+fun dateDigitToStr(digital: String): String {
+    val parts = digital.split(".")
+    val months = listOf("января", "февраля", "марта", "апреля", "мая", "июня", "июля", "августа", "сентября",
+            "октября", "ноября", "декабря")
+    try {
+        if (parts[0].toInt() !in 1..31 || parts[1].toInt() !in 1..12 || parts[2].toInt() < 0 || parts.size != 3) {
+            return ""
+        }
+        return String.format("%d %s %s", parts[0].toInt(), months[parts[1].toInt() - 1], parts[2])
+    } catch (e: NumberFormatException) {
+        return ""
+    } catch (e: IndexOutOfBoundsException) {
+        return ""
+    }
+}
 
 /**
  * Средняя
@@ -89,7 +114,15 @@ fun dateDigitToStr(digital: String): String = TODO()
  * Все символы в номере, кроме цифр, пробелов и +-(), считать недопустимыми.
  * При неверном формате вернуть пустую строку
  */
-fun flattenPhoneNumber(phone: String): String = TODO()
+fun flattenPhoneNumber(phone: String): String {
+    val phoneLen = phone.length
+    val newPhoneLen = phone.filter { it != '+' }.length
+    if ((phone[0] != '+' && phoneLen > newPhoneLen) || (phone[0] == '+' && phoneLen - newPhoneLen != 1))
+        return ""
+    if ("[^0-9()\\-\\s+]".toRegex().find(phone) != null)
+        return ""
+    return phone.filter { it !in listOf(' ', '-', ')', '(') }
+}
 
 /**
  * Средняя
@@ -101,7 +134,25 @@ fun flattenPhoneNumber(phone: String): String = TODO()
  * Прочитать строку и вернуть максимальное присутствующее в ней число (717 в примере).
  * При нарушении формата входной строки или при отсутствии в ней чисел, вернуть -1.
  */
-fun bestLongJump(jumps: String): Int = TODO()
+fun bestLongJump(jumps: String): Int {
+    if (jumps.isEmpty()) {
+        return -1
+    }
+    val parts = jumps.split(" ")
+    var maxJump = -1
+    for (part in parts) {
+        try {
+            if (part.toInt() > maxJump) maxJump = part.toInt()
+        } catch (e: NumberFormatException) {
+            if (part != "-" && part != "%")
+                return -1
+        }
+    }
+    if (maxJump >= 0) {
+        return maxJump
+    }
+    return -1
+}
 
 /**
  * Сложная
@@ -113,7 +164,30 @@ fun bestLongJump(jumps: String): Int = TODO()
  * Прочитать строку и вернуть максимальную взятую высоту (230 в примере).
  * При нарушении формата входной строки вернуть -1.
  */
-fun bestHighJump(jumps: String): Int = TODO()
+fun bestHighJump(jumps: String): Int {
+    if (jumps.isEmpty()) {
+        return -1
+    }
+    val parts = jumps.split(" ")
+    var maxJump = -1
+    for (i in 0..parts.size - 2) {
+        try {
+            for (element in parts[i + 1]) {
+                if (element == '+' && parts[i].toInt() > maxJump)
+                    maxJump = parts[i].toInt()
+            }
+        } catch (e: NumberFormatException) {
+            for (element in parts[i]) {
+                if (element != '+' && element != '%' && element != '-')
+                    return -1
+            }
+        }
+    }
+    if (maxJump >= 0) {
+        return maxJump
+    }
+    return -1
+}
 
 /**
  * Сложная
@@ -124,7 +198,37 @@ fun bestHighJump(jumps: String): Int = TODO()
  * Вернуть значение выражения (6 для примера).
  * Про нарушении формата входной строки бросить исключение IllegalArgumentException
  */
-fun plusMinus(expression: String): Int = TODO()
+fun plusMinus(expression: String): Int {
+    val parts = expression.split(" ")
+    var value = 0
+    try {
+        value = parts[0].toInt()
+    } catch (e: NumberFormatException) {
+        throw IllegalArgumentException()
+    }
+    var i = 1
+    var expressionSize = expression.length - parts[0].length - 1
+    while (expressionSize > 0) {
+        try {
+            when (parts[i]) {
+                "+" -> {
+                    value += parts[i + 1].toInt()
+                    expressionSize -= parts[i + 1].length + 3
+                }
+                "-" -> {
+                    value -= parts[i + 1].toInt()
+                    expressionSize -= parts[i + 1].length + 3
+                }
+                else -> throw IllegalArgumentException()
+            }
+            i += 2
+        } catch (e: NumberFormatException) {
+            throw IllegalArgumentException()
+        }
+    }
+    return value
+}
+
 
 /**
  * Сложная
@@ -135,7 +239,18 @@ fun plusMinus(expression: String): Int = TODO()
  * Вернуть индекс начала первого повторяющегося слова, или -1, если повторов нет.
  * Пример: "Он пошёл в в школу" => результат 9 (индекс первого 'в')
  */
-fun firstDuplicateIndex(str: String): Int = TODO()
+fun firstDuplicateIndex(str: String): Int {
+    var index = 0
+    val words = str.toLowerCase().split(" ")
+    var prevWord = words[0]
+    for (i in 1 until words.size - 1) {
+        if (words[i] == prevWord)
+            return index
+        index += words[i - 1].length + 1
+        prevWord = words[i]
+    }
+    return -1
+}
 
 /**
  * Сложная
@@ -148,7 +263,23 @@ fun firstDuplicateIndex(str: String): Int = TODO()
  * или пустую строку при нарушении формата строки.
  * Все цены должны быть положительными
  */
-fun mostExpensive(description: String): String = TODO()
+fun mostExpensive(description: String): String {
+    val newDescription = description.filter { it != ';' }
+    val parts = newDescription.split(" ")
+    var maxPrice = 0.0
+    var maxName = ""
+    try {
+        for (i in 1 until parts.size step 2) {
+            if (parts[i].toDouble() > maxPrice) {
+                maxPrice = parts[i].toDouble()
+                maxName = parts[i - 1]
+            }
+        }
+    } catch (e: NumberFormatException) {
+        return ""
+    }
+    return maxName
+}
 
 /**
  * Сложная
@@ -161,7 +292,89 @@ fun mostExpensive(description: String): String = TODO()
  *
  * Вернуть -1, если roman не является корректным римским числом
  */
-fun fromRoman(roman: String): Int = TODO()
+fun fromRoman(roman: String): Int {
+    var number = 0
+    var romanReplica = roman
+    while (romanReplica != "") {
+        when (romanReplica[0]) {
+            'M' -> {
+                number += 1000
+                romanReplica = romanReplica.substring(1)
+            }
+            'D' -> {
+                number += 500
+                romanReplica = romanReplica.substring(1)
+            }
+            'C' -> {
+                try {
+                    if (romanReplica[1] == 'M') {
+                        number += 900
+                        romanReplica = romanReplica.substring(2)
+                    } else {
+                        if (romanReplica[1] == 'D') {
+                            number += 400
+                            romanReplica = romanReplica.substring(2)
+                        } else {
+                            number += 100
+                            romanReplica = romanReplica.substring(1)
+                        }
+                    }
+                } catch (e: StringIndexOutOfBoundsException) {
+                    number += 100
+                    romanReplica = ""
+                }
+            }
+            'L' -> {
+                number += 50
+                romanReplica = romanReplica.substring(1)
+            }
+            'X' -> {
+                try {
+                    if (romanReplica[1] == 'C') {
+                        number += 90
+                        romanReplica = romanReplica.substring(2)
+                    } else {
+                        if (romanReplica[1] == 'L') {
+                            number += 40
+                            romanReplica = romanReplica.substring(2)
+                        } else {
+                            number += 10
+                            romanReplica = romanReplica.substring(1)
+                        }
+                    }
+                } catch (e: StringIndexOutOfBoundsException) {
+                    number += 10
+                    romanReplica = ""
+                }
+            }
+            'V' -> {
+                number += 5
+                romanReplica = romanReplica.substring(1)
+            }
+            'I' -> {
+                try {
+                    if (romanReplica[1] == 'X') {
+                        number += 9
+                        romanReplica = romanReplica.substring(2)
+                    } else {
+                        if (romanReplica[1] == 'V') {
+                            number += 4
+                            romanReplica = romanReplica.substring(2)
+                        } else {
+                            number += 1
+                            romanReplica = romanReplica.substring(1)
+                        }
+                    }
+                } catch (e: StringIndexOutOfBoundsException) {
+                    number += 1
+                    romanReplica = ""
+                }
+            }
+            else -> return -1
+        }
+    }
+    return number
+}
 
 /**
  * Очень сложная
@@ -199,4 +412,80 @@ fun fromRoman(roman: String): Int = TODO()
  * IllegalArgumentException должен бросаться даже если ошибочная команда не была достигнута в ходе выполнения.
  *
  */
-fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> = TODO()
+fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
+    val listOfCells = mutableListOf<Int>()
+    for (i in 0 until cells) {
+        listOfCells.add(0)
+    }
+    var currentCellIndex = cells / 2
+    var commandIndex = 0
+    for (i in 0 until limit) {
+        val command = commands[commandIndex]
+        when (command) {
+            '+' -> {
+                listOfCells[currentCellIndex]++
+                commandIndex++
+            }
+            '-' -> {
+                listOfCells[currentCellIndex]--
+                commandIndex++
+            }
+            '>' -> {
+                currentCellIndex++
+                commandIndex++
+            }
+            '<' -> {
+                currentCellIndex--
+                commandIndex++
+            }
+            '[' -> {
+                if (listOfCells[currentCellIndex] == 0) {
+                    try {
+                        var count = 0
+                        for (newCommandIndex in commandIndex + 1..commands.length) {
+                            if (commands[newCommandIndex] == '[')
+                                count++
+                            if (commands[newCommandIndex] == ']' && count == 0) {
+                                commandIndex = newCommandIndex + 1
+                                break
+                            }
+                            if (commands[newCommandIndex] == ']')
+                                count--
+                        }
+                    } catch (e: StringIndexOutOfBoundsException) {
+                        throw IllegalArgumentException()
+                    }
+                } else {
+                    commandIndex++
+                }
+            }
+            ']' -> {
+                if (listOfCells[currentCellIndex] != 0) {
+                    try {
+                        var count = 0
+                        for (newCommandIndex in commandIndex - 1 downTo -1) {
+                            if (commands[newCommandIndex] == ']')
+                                count++
+                            if (commands[newCommandIndex] == '[' && count == 0) {
+                                commandIndex = newCommandIndex + 1
+                                break
+                            }
+                            if (commands[newCommandIndex] == '[')
+                                count--
+                        }
+                    } catch (e: StringIndexOutOfBoundsException) {
+                        throw IllegalArgumentException()
+                    }
+                } else {
+                    commandIndex++
+                }
+
+            }
+            ' ' -> commandIndex++
+            else -> throw IllegalArgumentException()
+        }
+        if (commandIndex == commands.length)
+            break
+    }
+    return listOfCells
+}

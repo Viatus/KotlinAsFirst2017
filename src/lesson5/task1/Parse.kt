@@ -436,7 +436,7 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
                 throw IllegalArgumentException()
             }
         } else {
-            if (ch.value == '[') {
+            if (ch.value == ']') {
                 var count = 0
                 try {
                     for (newCommandIndex in ch.index - 1 downTo -1) {

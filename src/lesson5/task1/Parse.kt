@@ -443,16 +443,21 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
             '[' -> {
                 if (listOfCells[currentCellIndex] == 0) {
                     var count = 0
-                    for (newCommandIndex in commandIndex + 1..commands.length) {
-                        if (commands[newCommandIndex] == '[')
-                            count++
-                        if (commands[newCommandIndex] == ']' && count == 0) {
-                            commandIndex = newCommandIndex + 1
-                            break
+                    try {
+                        for (newCommandIndex in commandIndex + 1..commands.length) {
+                            if (commands[newCommandIndex] == '[')
+                                count++
+                            if (commands[newCommandIndex] == ']' && count == 0) {
+                                commandIndex = newCommandIndex + 1
+                                break
+                            }
+                            if (commands[newCommandIndex] == ']')
+                                count--
                         }
-                        if (commands[newCommandIndex] == ']')
-                            count--
+                    } catch (e: StringIndexOutOfBoundsException) {
+                        throw IllegalArgumentException()
                     }
+
                 } else {
                     commandIndex++
                 }
@@ -460,15 +465,19 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
             ']' -> {
                 if (listOfCells[currentCellIndex] != 0) {
                     var count = 0
-                    for (newCommandIndex in commandIndex - 1 downTo -1) {
-                        if (commands[newCommandIndex] == ']')
-                            count++
-                        if (commands[newCommandIndex] == '[' && count == 0) {
-                            commandIndex = newCommandIndex + 1
-                            break
+                    try {
+                        for (newCommandIndex in commandIndex - 1 downTo -1) {
+                            if (commands[newCommandIndex] == ']')
+                                count++
+                            if (commands[newCommandIndex] == '[' && count == 0) {
+                                commandIndex = newCommandIndex + 1
+                                break
+                            }
+                            if (commands[newCommandIndex] == '[')
+                                count--
                         }
-                        if (commands[newCommandIndex] == '[')
-                            count--
+                    } catch (e: StringIndexOutOfBoundsException) {
+                        throw IllegalArgumentException()
                     }
                 } else {
                     commandIndex++

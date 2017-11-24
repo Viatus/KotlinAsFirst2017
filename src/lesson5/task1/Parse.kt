@@ -117,7 +117,7 @@ fun dateDigitToStr(digital: String): String {
  */
 fun flattenPhoneNumber(phone: String): String {
     if (phone.isEmpty()) return ""
-    if ("[^0-9()\\-\\s+]".toRegex().find(phone) != null || ("/+".toRegex().find(phone.substring(1))) != null)
+    if ("[^0-9()\\-\\s+]".toRegex().find(phone) != null || ("/+".toRegex().find(phone.substring(1))) != null || phone == "+")
         return ""
     return phone.filter { it !in listOf(' ', '-', ')', '(', '\n') }
 }
@@ -433,10 +433,12 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
             '>' -> {
                 currentCellIndex++
                 commandIndex++
+                if (currentCellIndex !in 0 until 957) throw IllegalStateException()
             }
             '<' -> {
                 currentCellIndex--
                 commandIndex++
+                if (currentCellIndex !in 0 until 957) throw IllegalStateException()
             }
             '[' -> {
                 if (listOfCells[currentCellIndex] == 0) {

@@ -417,9 +417,46 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
         listOfCells.add(0)
     }
     var currentCellIndex = cells / 2
-    var commandIndex = 0
     if (commands.isEmpty()) return listOfCells
+    var commandIndex = 0
+    for (ch in commands.withIndex()) {
+        if (ch.value == '[') {
+            var count = 0
+            try {
+                for (newCommandIndex in ch.index + 1..commands.length) {
+                    if (commands[newCommandIndex] == '[')
+                        count++
+                    if (commands[newCommandIndex] == ']' && count == 0) {
+                        break
+                    }
+                    if (commands[newCommandIndex] == ']')
+                        count--
+                }
+            } catch (e: StringIndexOutOfBoundsException) {
+                throw IllegalArgumentException()
+            }
+        } else {
+            if (ch.value == '[') {
+                var count = 0
+                try {
+                    for (newCommandIndex in ch.index - 1 downTo -1) {
+                        if (commands[newCommandIndex] == ']')
+                            count++
+                        if (commands[newCommandIndex] == '[' && count == 0) {
+                            break
+                        }
+                        if (commands[newCommandIndex] == '[')
+                            count--
+                    }
+                } catch (e: StringIndexOutOfBoundsException) {
+                    throw IllegalArgumentException()
+                }
+            }
+        }
+    }
     for (i in 0 until limit) {
+        if (commandIndex >= commands.length)
+            break
         val command = commands[commandIndex]
         when (command) {
             '+' -> {
@@ -441,54 +478,43 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
                 if (currentCellIndex !in 0 until cells) throw IllegalStateException()
             }
             '[' -> {
-                if (listOfCells[currentCellIndex] == 0) {
-                    var count = 0
-                    try {
-                        for (newCommandIndex in commandIndex + 1..commands.length) {
-                            if (commands[newCommandIndex] == '[')
-                                count++
-                            if (commands[newCommandIndex] == ']' && count == 0) {
-                                commandIndex = newCommandIndex + 1
-                                break
-                            }
-                            if (commands[newCommandIndex] == ']')
-                                count--
-                        }
-                    } catch (e: StringIndexOutOfBoundsException) {
-                        throw IllegalArgumentException()
-                    }
-
-                } else {
+                if (listOfCells[currentCellIndex] != 0) {
                     commandIndex++
+                } else {
+                    var count = 0
+                    for (newCommandIndex in commandIndex + 1..commands.length) {
+                        if (commands[newCommandIndex] == '[')
+                            count++
+                        if (commands[newCommandIndex] == ']' && count == 0) {
+                            if (listOfCells[currentCellIndex] == 0)
+                                commandIndex = newCommandIndex + 1
+                            break
+                        }
+                        if (commands[newCommandIndex] == ']')
+                            count--
+                    }
                 }
             }
             ']' -> {
-                if (listOfCells[currentCellIndex] != 0) {
-                    var count = 0
-                    try {
-                        for (newCommandIndex in commandIndex - 1 downTo -1) {
-                            if (commands[newCommandIndex] == ']')
-                                count++
-                            if (commands[newCommandIndex] == '[' && count == 0) {
-                                commandIndex = newCommandIndex + 1
-                                break
-                            }
-                            if (commands[newCommandIndex] == '[')
-                                count--
-                        }
-                    } catch (e: StringIndexOutOfBoundsException) {
-                        throw IllegalArgumentException()
-                    }
-                } else {
+                if (listOfCells[currentCellIndex] == 0) {
                     commandIndex++
+                } else {
+                    var count = 0
+                    for (newCommandIndex in commandIndex - 1 downTo -1) {
+                        if (commands[newCommandIndex] == ']')
+                            count++
+                        if (commands[newCommandIndex] == '[' && count == 0) {
+                            commandIndex = newCommandIndex + 1
+                            break
+                        }
+                        if (commands[newCommandIndex] == '[')
+                            count--
+                    }
                 }
-
             }
             ' ' -> commandIndex++
             else -> throw IllegalArgumentException()
         }
-        if (commandIndex == commands.length)
-            break
     }
     return listOfCells
 }

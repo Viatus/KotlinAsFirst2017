@@ -67,10 +67,11 @@ fun main(args: Array<String>) {
  */
 fun dateStrToDigit(str: String): String {
     val parts = str.split(" ")
+    if (parts.size != 3) return ""
     val monthNumbers = mapOf("января" to 1, "февраля" to 2, "марта" to 3, "апреля" to 4, "мая" to 5, "июня" to 6,
             "июля" to 7, "августа" to 8, "сентября" to 9, "октября" to 10, "ноября" to 11, "декабря" to 12)
     try {
-        if (parts[0].toInt() !in 1..31 || monthNumbers[parts[1]] == null || parts[2].toInt() < 0 || parts.size != 3) {
+        if (parts[0].toInt() !in 1..31 || monthNumbers[parts[1]] == null || parts[2].toInt() < 0) {
             return ""
         }
         return String.format("%02d.%02d.%s", parts[0].toInt(), monthNumbers[parts[1]], parts[2])
@@ -115,13 +116,11 @@ fun dateDigitToStr(digital: String): String {
  * При неверном формате вернуть пустую строку
  */
 fun flattenPhoneNumber(phone: String): String {
-    val phoneLen = phone.length
-    val newPhoneLen = phone.filter { it != '+' }.length
-    if ((phone[0] != '+' && phoneLen > newPhoneLen) || (phone[0] == '+' && phoneLen - newPhoneLen != 1))
+    if (("/+".toRegex().find(phone.substring(1))) != null)
         return ""
     if ("[^0-9()\\-\\s+]".toRegex().find(phone) != null)
         return ""
-    return phone.filter { it !in listOf(' ', '-', ')', '(') }
+    return phone.filter { it !in listOf(' ', '-', ')', '(', '\n') }
 }
 
 /**
@@ -144,7 +143,7 @@ fun bestLongJump(jumps: String): Int {
         try {
             if (part.toInt() > maxJump) maxJump = part.toInt()
         } catch (e: NumberFormatException) {
-            if (part != "-" && part != "%")
+            if (part != "-" && part != "%" && part != "")
                 return -1
         }
     }
@@ -243,7 +242,7 @@ fun firstDuplicateIndex(str: String): Int {
     var index = 0
     val words = str.toLowerCase().split(" ")
     var prevWord = words[0]
-    for (i in 1 until words.size - 1) {
+    for (i in 1 until words.size) {
         if (words[i] == prevWord)
             return index
         index += words[i - 1].length + 1
@@ -270,7 +269,7 @@ fun mostExpensive(description: String): String {
     var maxName = ""
     try {
         for (i in 1 until parts.size step 2) {
-            if (parts[i].toDouble() > maxPrice) {
+            if (parts[i].toDouble() >= maxPrice) {
                 maxPrice = parts[i].toDouble()
                 maxName = parts[i - 1]
             }
@@ -293,6 +292,7 @@ fun mostExpensive(description: String): String {
  * Вернуть -1, если roman не является корректным римским числом
  */
 fun fromRoman(roman: String): Int {
+    if (roman.isEmpty()) return -1
     var number = 0
     var romanReplica = roman
     while (romanReplica != "") {
@@ -440,20 +440,16 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
             }
             '[' -> {
                 if (listOfCells[currentCellIndex] == 0) {
-                    try {
-                        var count = 0
-                        for (newCommandIndex in commandIndex + 1..commands.length) {
-                            if (commands[newCommandIndex] == '[')
-                                count++
-                            if (commands[newCommandIndex] == ']' && count == 0) {
-                                commandIndex = newCommandIndex + 1
-                                break
-                            }
-                            if (commands[newCommandIndex] == ']')
-                                count--
+                    var count = 0
+                    for (newCommandIndex in commandIndex + 1..commands.length) {
+                        if (commands[newCommandIndex] == '[')
+                            count++
+                        if (commands[newCommandIndex] == ']' && count == 0) {
+                            commandIndex = newCommandIndex + 1
+                            break
                         }
-                    } catch (e: StringIndexOutOfBoundsException) {
-                        throw IllegalArgumentException()
+                        if (commands[newCommandIndex] == ']')
+                            count--
                     }
                 } else {
                     commandIndex++
@@ -461,20 +457,16 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
             }
             ']' -> {
                 if (listOfCells[currentCellIndex] != 0) {
-                    try {
-                        var count = 0
-                        for (newCommandIndex in commandIndex - 1 downTo -1) {
-                            if (commands[newCommandIndex] == ']')
-                                count++
-                            if (commands[newCommandIndex] == '[' && count == 0) {
-                                commandIndex = newCommandIndex + 1
-                                break
-                            }
-                            if (commands[newCommandIndex] == '[')
-                                count--
+                    var count = 0
+                    for (newCommandIndex in commandIndex - 1 downTo -1) {
+                        if (commands[newCommandIndex] == ']')
+                            count++
+                        if (commands[newCommandIndex] == '[' && count == 0) {
+                            commandIndex = newCommandIndex + 1
+                            break
                         }
-                    } catch (e: StringIndexOutOfBoundsException) {
-                        throw IllegalArgumentException()
+                        if (commands[newCommandIndex] == '[')
+                            count--
                     }
                 } else {
                     commandIndex++

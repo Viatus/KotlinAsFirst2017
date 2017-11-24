@@ -433,12 +433,12 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
             '>' -> {
                 currentCellIndex++
                 commandIndex++
-                if (currentCellIndex !in 0 until 957) throw IllegalStateException()
+                if (currentCellIndex !in 0 until cells) throw IllegalStateException()
             }
             '<' -> {
                 currentCellIndex--
                 commandIndex++
-                if (currentCellIndex !in 0 until 957) throw IllegalStateException()
+                if (currentCellIndex !in 0 until cells) throw IllegalStateException()
             }
             '[' -> {
                 if (listOfCells[currentCellIndex] == 0) {

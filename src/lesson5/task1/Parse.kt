@@ -75,7 +75,7 @@ fun dateStrToDigit(str: String): String {
             return ""
         }
         return String.format("%02d.%02d.%s", parts[0].toInt(), monthNumbers[parts[1]], parts[2])
-    } catch (e: IndexOutOfBoundsException) {
+    } catch (e: NumberFormatException) {
         return ""
     }
 }
@@ -116,9 +116,8 @@ fun dateDigitToStr(digital: String): String {
  * При неверном формате вернуть пустую строку
  */
 fun flattenPhoneNumber(phone: String): String {
-    if (("/+".toRegex().find(phone.substring(1))) != null)
-        return ""
-    if ("[^0-9()\\-\\s+]".toRegex().find(phone) != null)
+    if (phone.isEmpty()) return ""
+    if ("[^0-9()\\-\\s+]".toRegex().find(phone) != null || ("/+".toRegex().find(phone.substring(1))) != null)
         return ""
     return phone.filter { it !in listOf(' ', '-', ')', '(', '\n') }
 }
@@ -419,6 +418,7 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
     }
     var currentCellIndex = cells / 2
     var commandIndex = 0
+    if (commands.isEmpty()) return listOfCells
     for (i in 0 until limit) {
         val command = commands[commandIndex]
         when (command) {

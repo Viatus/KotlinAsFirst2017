@@ -116,9 +116,23 @@ fun dateDigitToStr(digital: String): String {
  * При неверном формате вернуть пустую строку
  */
 fun flattenPhoneNumber(phone: String): String {
-    if (phone.isEmpty()) return ""
-    if ("[^0-9()\\-\\s+]".toRegex().find(phone) != null || ("/+".toRegex().find(phone.substring(1))) != null || phone == "+")
-        return ""
+    if (phone.isEmpty() || "[^0-9()\\-\\s+]".toRegex().find(phone) != null) return ""
+    var count = 0
+    for (char in phone) {
+        if (char == '+') count++
+    }
+    when (count) {
+        1 -> {
+            if (phone[0] != '+' || "\\+[0-9]+".toRegex().find(phone) == null) return ""
+        }
+        else -> if (count != 0) return ""
+    }
+    if (phone.count { it == '(' } > 1 || phone.count { it == '(' } > 1) return ""
+    count = 0
+    for (char in phone) {
+        if (char == ')') count++
+        if ((char == '(' || "\\([0-9]+\\)".toRegex().find(phone) == null) && count != 0) return ""
+    }
     return phone.filter { it !in listOf(' ', '-', ')', '(', '\n') }
 }
 
@@ -166,14 +180,12 @@ fun bestHighJump(jumps: String): Int {
     if (jumps.isEmpty()) {
         return -1
     }
-    val parts = jumps.split(" ")
+    val parts = jumps.split("\\s+".toRegex())
     var maxJump = -1
-    for (i in 0..parts.size - 2) {
+    for (i in 0..parts.size - 2 step 2) {
         try {
-            for (element in parts[i + 1]) {
-                if (element == '+' && parts[i].toInt() > maxJump)
-                    maxJump = parts[i].toInt()
-            }
+            if (parts[i + 1] == "+" && parts[i].toInt() > maxJump)
+                maxJump = parts[i].toInt()
         } catch (e: NumberFormatException) {
             for (element in parts[i]) {
                 if (element != '+' && element != '%' && element != '-')
@@ -422,34 +434,28 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
     for (ch in commands.withIndex()) {
         if (ch.value == '[') {
             var count = 0
-            try {
-                for (newCommandIndex in ch.index + 1..commands.length) {
-                    if (commands[newCommandIndex] == '[')
-                        count++
-                    if (commands[newCommandIndex] == ']' && count == 0) {
-                        break
-                    }
-                    if (commands[newCommandIndex] == ']')
-                        count--
+            for (newCommandIndex in ch.index + 1..commands.length) {
+                if (newCommandIndex == commands.length) throw IllegalArgumentException()
+                if (commands[newCommandIndex] == '[')
+                    count++
+                if (commands[newCommandIndex] == ']' && count == 0) {
+                    break
                 }
-            } catch (e: StringIndexOutOfBoundsException) {
-                throw IllegalArgumentException()
+                if (commands[newCommandIndex] == ']')
+                    count--
             }
         } else {
             if (ch.value == ']') {
                 var count = 0
-                try {
-                    for (newCommandIndex in ch.index - 1 downTo -1) {
-                        if (commands[newCommandIndex] == ']')
-                            count++
-                        if (commands[newCommandIndex] == '[' && count == 0) {
-                            break
-                        }
-                        if (commands[newCommandIndex] == '[')
-                            count--
+                for (newCommandIndex in ch.index - 1 downTo -1) {
+                    if (newCommandIndex == commands.length) throw IllegalArgumentException()
+                    if (commands[newCommandIndex] == ']')
+                        count++
+                    if (commands[newCommandIndex] == '[' && count == 0) {
+                        break
                     }
-                } catch (e: StringIndexOutOfBoundsException) {
-                    throw IllegalArgumentException()
+                    if (commands[newCommandIndex] == '[')
+                        count--
                 }
             }
         }

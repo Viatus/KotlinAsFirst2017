@@ -431,37 +431,17 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
     var currentCellIndex = cells / 2
     if (commands.isEmpty()) return listOfCells
     var commandIndex = 0
-    for (ch in commands.withIndex()) {
-        if (ch.value == '[') {
-            var count = 0
-            for (newCommandIndex in ch.index + 1..commands.length) {
-                if (newCommandIndex == commands.length)
-                    throw IllegalArgumentException()
-                if (commands[newCommandIndex] == '[')
-                    count++
-                if (commands[newCommandIndex] == ']' && count == 0) {
-                    break
-                }
-                if (commands[newCommandIndex] == ']')
-                    count--
-            }
-        } else {
-            if (ch.value == ']') {
-                var count = 0
-                for (newCommandIndex in ch.index - 1 downTo -1) {
-                    if (newCommandIndex == -1)
-                        throw IllegalArgumentException()
-                    if (commands[newCommandIndex] == ']')
-                        count++
-                    if (commands[newCommandIndex] == '[' && count == 0) {
-                        break
-                    }
-                    if (commands[newCommandIndex] == '[')
-                        count--
-                }
-            }
+    var countBracket = 0
+    for (ch in commands) {
+        when (ch) {
+            '[' -> countBracket++
+            ']' -> countBracket--
         }
+        if (countBracket < 0)
+            throw IllegalArgumentException()
     }
+    if (countBracket != 0)
+        throw IllegalArgumentException()
     for (i in 0 until limit) {
         if (commandIndex >= commands.length)
             break

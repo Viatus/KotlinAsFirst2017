@@ -184,7 +184,7 @@ fun bestHighJump(jumps: String): Int {
     var maxJump = -1
     for (i in 0..parts.size - 2 step 2) {
         try {
-            if (parts[i + 1] == "+" && parts[i].toInt() > maxJump)
+            if ("\\+".toRegex().find(parts[i + 1]) != null && parts[i].toInt() > maxJump)
                 maxJump = parts[i].toInt()
         } catch (e: NumberFormatException) {
             for (element in parts[i]) {
@@ -435,7 +435,8 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
         if (ch.value == '[') {
             var count = 0
             for (newCommandIndex in ch.index + 1..commands.length) {
-                if (newCommandIndex == commands.length) throw IllegalArgumentException()
+                if (newCommandIndex == commands.length)
+                    throw IllegalArgumentException()
                 if (commands[newCommandIndex] == '[')
                     count++
                 if (commands[newCommandIndex] == ']' && count == 0) {
@@ -448,7 +449,8 @@ fun computeDeviceCells(cells: Int, commands: String, limit: Int): List<Int> {
             if (ch.value == ']') {
                 var count = 0
                 for (newCommandIndex in ch.index - 1 downTo -1) {
-                    if (newCommandIndex == commands.length) throw IllegalArgumentException()
+                    if (newCommandIndex == -1)
+                        throw IllegalArgumentException()
                     if (commands[newCommandIndex] == ']')
                         count++
                     if (commands[newCommandIndex] == '[' && count == 0) {

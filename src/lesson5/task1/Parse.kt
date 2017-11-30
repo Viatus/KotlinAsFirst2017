@@ -116,23 +116,7 @@ fun dateDigitToStr(digital: String): String {
  * При неверном формате вернуть пустую строку
  */
 fun flattenPhoneNumber(phone: String): String {
-    if (phone.isEmpty() || "[^0-9()\\-\\s+]".toRegex().find(phone) != null) return ""
-    var count = 0
-    for (char in phone) {
-        if (char == '+') count++
-    }
-    when (count) {
-        1 -> {
-            if (phone[0] != '+' || "\\+[0-9]+".toRegex().find(phone) == null) return ""
-        }
-        else -> if (count != 0) return ""
-    }
-    if (phone.count { it == '(' } > 1 || phone.count { it == '(' } > 1) return ""
-    count = 0
-    for (char in phone) {
-        if (char == ')') count++
-        if ((char == '(' || "\\([0-9]+\\)".toRegex().find(phone) == null) && count != 0) return ""
-    }
+    if (!"""(\+([0-9])+)?\s*(\([0-9]+\))?[0-9\-\s]*""".toRegex().matches(phone)) return ""
     return phone.filter { it !in listOf(' ', '-', ')', '(', '\n') }
 }
 
@@ -317,22 +301,28 @@ fun fromRoman(roman: String): Int {
                 romanReplica = romanReplica.substring(1)
             }
             'C' -> {
-                try {
+                if (romanReplica.length == 1) {
+                    romanReplica = ""
+                    number += 100
+                } else {
                     if (romanReplica[1] == 'M') {
                         number += 900
-                        romanReplica = romanReplica.substring(2)
+                        romanReplica = if (romanReplica.length < 3) {
+                            ""
+                        } else
+                            romanReplica.substring(2)
                     } else {
                         if (romanReplica[1] == 'D') {
                             number += 400
-                            romanReplica = romanReplica.substring(2)
+                            romanReplica = if (romanReplica.length < 3) {
+                                ""
+                            } else
+                                romanReplica.substring(2)
                         } else {
                             number += 100
                             romanReplica = romanReplica.substring(1)
                         }
                     }
-                } catch (e: StringIndexOutOfBoundsException) {
-                    number += 100
-                    romanReplica = ""
                 }
             }
             'L' -> {
@@ -340,22 +330,28 @@ fun fromRoman(roman: String): Int {
                 romanReplica = romanReplica.substring(1)
             }
             'X' -> {
-                try {
+                if (romanReplica.length == 1) {
+                    romanReplica = ""
+                    number += 10
+                } else {
                     if (romanReplica[1] == 'C') {
                         number += 90
-                        romanReplica = romanReplica.substring(2)
+                        romanReplica = if (romanReplica.length < 3) {
+                            ""
+                        } else
+                            romanReplica.substring(2)
                     } else {
                         if (romanReplica[1] == 'L') {
                             number += 40
-                            romanReplica = romanReplica.substring(2)
+                            romanReplica = if (romanReplica.length < 3) {
+                                ""
+                            } else
+                                romanReplica.substring(2)
                         } else {
                             number += 10
                             romanReplica = romanReplica.substring(1)
                         }
                     }
-                } catch (e: StringIndexOutOfBoundsException) {
-                    number += 10
-                    romanReplica = ""
                 }
             }
             'V' -> {
@@ -363,22 +359,28 @@ fun fromRoman(roman: String): Int {
                 romanReplica = romanReplica.substring(1)
             }
             'I' -> {
-                try {
+                if (romanReplica.length == 1) {
+                    romanReplica = ""
+                    number += 1
+                } else {
                     if (romanReplica[1] == 'X') {
                         number += 9
-                        romanReplica = romanReplica.substring(2)
+                        romanReplica = if (romanReplica.length < 3) {
+                            ""
+                        } else
+                            romanReplica.substring(2)
                     } else {
                         if (romanReplica[1] == 'V') {
                             number += 4
-                            romanReplica = romanReplica.substring(2)
+                            romanReplica = if (romanReplica.length < 3) {
+                                ""
+                            } else
+                                romanReplica.substring(2)
                         } else {
                             number += 1
                             romanReplica = romanReplica.substring(1)
                         }
                     }
-                } catch (e: StringIndexOutOfBoundsException) {
-                    number += 1
-                    romanReplica = ""
                 }
             }
             else -> return -1

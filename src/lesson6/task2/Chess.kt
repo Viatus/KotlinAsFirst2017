@@ -1,4 +1,5 @@
 @file:Suppress("UNUSED_PARAMETER")
+
 package lesson6.task2
 
 /**
@@ -21,7 +22,12 @@ data class Square(val column: Int, val row: Int) {
      * В нотации, колонки обозначаются латинскими буквами от a до h, а ряды -- цифрами от 1 до 8.
      * Для клетки не в пределах доски вернуть пустую строку
      */
-    fun notation(): String = TODO()
+    fun notation(): String {
+        if (!this.inside()) return ""
+        val columnName = ('a' - 1 + column).toString()
+        val rowName = row.toString()
+        return columnName + rowName
+    }
 }
 
 /**
@@ -31,7 +37,12 @@ data class Square(val column: Int, val row: Int) {
  * В нотации, колонки обозначаются латинскими буквами от a до h, а ряды -- цифрами от 1 до 8.
  * Если нотация некорректна, бросить IllegalArgumentException
  */
-fun square(notation: String): Square = TODO()
+fun square(notation: String): Square {
+    if (notation.length != 2) throw IllegalArgumentException()
+    val newSquare = Square((notation[0] + 1 - 'a'), notation.substring(1).toInt())
+    if (newSquare.inside()) return newSquare
+    else throw IllegalArgumentException()
+}
 
 /**
  * Простая
@@ -56,7 +67,12 @@ fun square(notation: String): Square = TODO()
  * Пример: rookMoveNumber(Square(3, 1), Square(6, 3)) = 2
  * Ладья может пройти через клетку (3, 3) или через клетку (6, 1) к клетке (6, 3).
  */
-fun rookMoveNumber(start: Square, end: Square): Int = TODO()
+fun rookMoveNumber(start: Square, end: Square): Int {
+    if (!start.inside() || !end.inside()) throw IllegalArgumentException()
+    if (start == end) return 0
+    return if (start.row == end.row || start.column == end.column) 1
+    else 2
+}
 
 /**
  * Средняя
@@ -72,7 +88,12 @@ fun rookMoveNumber(start: Square, end: Square): Int = TODO()
  *          rookTrajectory(Square(3, 5), Square(8, 5)) = listOf(Square(3, 5), Square(8, 5))
  * Если возможно несколько вариантов самой быстрой траектории, вернуть любой из них.
  */
-fun rookTrajectory(start: Square, end: Square): List<Square> = TODO()
+fun rookTrajectory(start: Square, end: Square): List<Square> {
+    if (!start.inside() || !end.inside()) throw IllegalArgumentException()
+    if (start == end) return listOf(start)
+    return if (start.row == end.row || start.column == end.column) listOf(start, end)
+    else listOf(start, Square(start.column, end.row), end)
+}
 
 /**
  * Простая
@@ -97,7 +118,13 @@ fun rookTrajectory(start: Square, end: Square): List<Square> = TODO()
  * Примеры: bishopMoveNumber(Square(3, 1), Square(6, 3)) = -1; bishopMoveNumber(Square(3, 1), Square(3, 7)) = 2.
  * Слон может пройти через клетку (6, 4) к клетке (3, 7).
  */
-fun bishopMoveNumber(start: Square, end: Square): Int = TODO()
+fun bishopMoveNumber(start: Square, end: Square): Int {
+    if (!start.inside() || !end.inside()) throw IllegalArgumentException()
+    if (start == end) return 0
+    if ((start.column + start.row) % 2 != (end.column + end.row) % 2) return -1
+    return if (Math.abs(start.column - start.row) == Math.abs(end.column - end.row)) 1
+    else 2
+}
 
 /**
  * Сложная
@@ -117,7 +144,25 @@ fun bishopMoveNumber(start: Square, end: Square): Int = TODO()
  *          bishopTrajectory(Square(1, 3), Square(6, 8)) = listOf(Square(1, 3), Square(6, 8))
  * Если возможно несколько вариантов самой быстрой траектории, вернуть любой из них.
  */
-fun bishopTrajectory(start: Square, end: Square): List<Square> = TODO()
+fun bishopTrajectory(start: Square, end: Square): List<Square> = when {
+    start == end -> listOf(start)
+    (start.column + end.column) % 2 != (start.row + end.row) % 2 -> listOf<Square>()
+    Math.abs(start.column - end.column) == Math.abs(start.row - end.row) || start.column + end.column == start.row + end.row ->
+        listOf(start, end)
+    else -> {
+        val firstNewCol = (start.column + start.row + end.column - end.row) / 2
+        val firstNewRow = (start.row + start.column + end.row - end.column) / 2
+        val secondNewCol = (start.column - start.row + end.column + end.row) / 2
+        val secondNewRow = (-start.column + start.row + end.column + end.row) / 2
+        val firstNewSquare = Square(firstNewCol, firstNewRow)
+        val secondNewSquare = Square(secondNewCol, secondNewRow)
+        when {
+            firstNewSquare.inside() -> listOf(start, firstNewSquare, end)
+            secondNewSquare.inside() -> listOf(start, secondNewSquare, end)
+            else -> listOf()
+        }
+    }
+}
 
 /**
  * Средняя
@@ -139,7 +184,14 @@ fun bishopTrajectory(start: Square, end: Square): List<Square> = TODO()
  * Пример: kingMoveNumber(Square(3, 1), Square(6, 3)) = 3.
  * Король может последовательно пройти через клетки (4, 2) и (5, 2) к клетке (6, 3).
  */
-fun kingMoveNumber(start: Square, end: Square): Int = TODO()
+fun kingMoveNumber(start: Square, end: Square): Int {
+    if (!start.inside() || !end.inside()) throw IllegalArgumentException()
+    return when {
+        start == end -> 0
+        Math.abs(start.column - end.column) > Math.abs(start.row - end.row) -> Math.abs(start.column - end.column)
+        else -> Math.abs(start.row - end.row)
+    }
+}
 
 /**
  * Сложная
@@ -155,7 +207,54 @@ fun kingMoveNumber(start: Square, end: Square): Int = TODO()
  *          kingTrajectory(Square(3, 5), Square(6, 2)) = listOf(Square(3, 5), Square(4, 4), Square(5, 3), Square(6, 2))
  * Если возможно несколько вариантов самой быстрой траектории, вернуть любой из них.
  */
-fun kingTrajectory(start: Square, end: Square): List<Square> = TODO()
+fun kingTrajectory(start: Square, end: Square): List<Square> {
+    when {
+        !start.inside() || !end.inside() -> throw IllegalArgumentException()
+        start == end -> return listOf(start)
+        start.column == end.column -> {
+            val path = mutableListOf<Square>()
+            for (i in minOf(start.row, end.row)..maxOf(start.row, end.row))
+                path.add(Square(start.column, i))
+            return path
+        }
+        start.row == end.row -> {
+            val path = mutableListOf<Square>()
+            for (i in minOf(start.column, end.column)..maxOf(start.column, end.column))
+                path.add(Square(start.column, i))
+            return path
+        }
+        Math.abs(start.column - end.column) > Math.abs(start.row - end.row) -> {
+            val path = mutableListOf<Square>()
+            for (i in 1 until maxOf(start.row, end.row) - minOf(start.row, end.row)) {
+                when {
+                    start.row > end.row && start.column > end.column -> path.add(Square(start.column + i, start.row + i))
+                    start.row < end.row && start.column < end.column -> path.add(Square(start.column - i, start.row - i))
+                    start.row > end.row && start.column < end.column -> path.add(Square(start.column + i, start.row - i))
+                    start.row < end.row && start.column > end.column -> path.add(Square(start.column - i, start.row + i))
+                }
+            }
+            for (i in start.column + Math.abs(start.row - end.row)..end.column) {
+                path.add(Square(i, end.row))
+            }
+            return path
+        }
+        else -> {
+            val path = mutableListOf<Square>()
+            for (i in 0 until maxOf(start.column, end.column) - minOf(start.column, end.column)) {
+                when {
+                    start.row > end.row && start.column > end.column -> path.add(Square(start.column + i, start.row + i))
+                    start.row < end.row && start.column < end.column -> path.add(Square(start.column - i, start.row - i))
+                    start.row > end.row && start.column < end.column -> path.add(Square(start.column + i, start.row - i))
+                    start.row < end.row && start.column > end.column -> path.add(Square(start.column - i, start.row + i))
+                }
+            }
+            for (i in start.row + start.column - end.column..end.row) {
+                path.add(Square(end.column, i))
+            }
+            return path
+        }
+    }
+}
 
 /**
  * Сложная
@@ -181,6 +280,36 @@ fun kingTrajectory(start: Square, end: Square): List<Square> = TODO()
  * Конь может последовательно пройти через клетки (5, 2) и (4, 4) к клетке (6, 3).
  */
 fun knightMoveNumber(start: Square, end: Square): Int = TODO()
+    /*{
+    if (!start.inside() || !end.inside()) throw IllegalArgumentException()
+    if (start == end) return 0
+    var possibleMoves = listOf<Square>(Square(start.column + 2, start.row + 1), Square(start.column + 1, start.row + 2),
+            Square(start.column - 1, start.row + 2), Square(start.column - 2, start.row + 1),
+            Square(start.column + 1, start.row - 2), Square(start.column + 2, start.row - 1),
+            Square(start.column - 1, start.row - 2), Square(start.column - 2, start.row - 1))
+    var current = start
+    var moveNumber = 0
+    while (current != end) {
+        var min = 8
+        moveNumber++
+        for (i in 0..7) {
+            if (possibleMoves[i] == end){
+                current = end
+                break
+            }
+            if (possibleMoves[i].inside() && kingMoveNumber(possibleMoves[i], end) <= min && possibleMoves[i].column != end.column && possibleMoves[i].row != end.row) {
+                min = kingMoveNumber(possibleMoves[i], end)
+                current = possibleMoves[i]
+            }
+        }
+        possibleMoves = listOf<Square>(Square(current.column + 2, current.row + 1), Square(current.column + 1, current.row + 2),
+                Square(current.column - 1, current.row + 2), Square(current.column - 2, current.row + 1),
+                Square(current.column + 1, current.row - 2), Square(current.column + 2, current.row - 1),
+                Square(current.column - 1, current.row - 2), Square(current.column - 2, current.row - 1))
+    }
+    return moveNumber
+    }*/
+
 
 /**
  * Очень сложная

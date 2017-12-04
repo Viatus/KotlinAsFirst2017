@@ -126,7 +126,8 @@ fun bishopMoveNumber(start: Square, end: Square): Int {
     if (!start.inside() || !end.inside()) throw IllegalArgumentException()
     if (start == end) return 0
     if ((start.column + start.row) % 2 != (end.column + end.row) % 2) return -1
-    return if (Math.abs(start.column - start.row) == Math.abs(end.column - end.row) || start.column + start.row == end.column + end.row) 1
+    return if (((Math.abs(start.column - start.row) == Math.abs(end.column - end.row)) || start.column + start.row == end.column + end.row)
+            && start.column != end.column && start.row != end.row) 1
     else 2
 }
 
@@ -237,8 +238,14 @@ fun kingTrajectory(start: Square, end: Square): List<Square> {
                     start.row < end.row && start.column > end.column -> path.add(Square(start.column - i, start.row + i))
                 }
             }
-            for (i in start.column + Math.abs(start.row - end.row) + 1..end.column) {
-                path.add(Square(i, end.row))
+            if (end.column > start.column) {
+                for (i in start.column + Math.abs(start.row - end.row) + 1..end.column) {
+                    path.add(Square(i, end.row))
+                }
+            } else {
+                for (i in end.column downTo start.column + Math.abs(start.row - end.row) + 1) {
+                    path.add(Square(i, end.row))
+                }
             }
             return path
         }
@@ -252,8 +259,14 @@ fun kingTrajectory(start: Square, end: Square): List<Square> {
                     start.row < end.row && start.column > end.column -> path.add(Square(start.column - i, start.row + i))
                 }
             }
-            for (i in start.row + Math.abs(start.column - end.column) + 1..end.row) {
-                path.add(Square(end.column, i))
+            if (end.row > start.row) {
+                for (i in start.row + Math.abs(start.column - end.column) + 1..end.row) {
+                    path.add(Square(end.column, i))
+                }
+            } else {
+                for (i in end.row downTo start.row + Math.abs(start.column - end.column) + 1) {
+                    path.add(Square(end.column, i))
+                }
             }
             return path
         }

@@ -23,14 +23,10 @@ data class Square(val column: Int, val row: Int) {
      * Для клетки не в пределах доски вернуть пустую строку
      */
     fun notation(): String {
-        try {
-            if (!this.inside()) return ""
-            val columnName = ('a' - 1 + column).toString()
-            val rowName = row.toString()
-            return columnName + rowName
-        } catch (e: NumberFormatException) {
-            throw IllegalArgumentException()
-        }
+        if (!this.inside()) return ""
+        val columnName = ('a' - 1 + column).toString()
+        val rowName = row.toString()
+        return columnName + rowName
     }
 }
 
@@ -42,10 +38,14 @@ data class Square(val column: Int, val row: Int) {
  * Если нотация некорректна, бросить IllegalArgumentException
  */
 fun square(notation: String): Square {
-    if (notation.length != 2) throw IllegalArgumentException()
-    val newSquare = Square((notation[0] + 1 - 'a'), notation.substring(1).toInt())
-    if (newSquare.inside()) return newSquare
-    else throw IllegalArgumentException()
+    try {
+        if (notation.length != 2) throw IllegalArgumentException()
+        val newSquare = Square((notation[0] + 1 - 'a'), notation.substring(1).toInt())
+        if (newSquare.inside()) return newSquare
+        else throw IllegalArgumentException()
+    } catch (e: NumberFormatException) {
+        throw IllegalArgumentException()
+    }
 }
 
 /**
@@ -126,7 +126,7 @@ fun bishopMoveNumber(start: Square, end: Square): Int {
     if (!start.inside() || !end.inside()) throw IllegalArgumentException()
     if (start == end) return 0
     if ((start.column + start.row) % 2 != (end.column + end.row) % 2) return -1
-    return if (Math.abs(start.column - start.row) == Math.abs(end.column - end.row)) 1
+    return if (Math.abs(start.column - start.row) == Math.abs(end.column - end.row) || start.column + start.row == end.column + end.row) 1
     else 2
 }
 
@@ -237,7 +237,7 @@ fun kingTrajectory(start: Square, end: Square): List<Square> {
                     start.row < end.row && start.column > end.column -> path.add(Square(start.column - i, start.row + i))
                 }
             }
-            for (i in start.column + Math.abs(start.row - end.row) - 1..end.column) {
+            for (i in start.column + Math.abs(start.row - end.row) + 1..end.column) {
                 path.add(Square(i, end.row))
             }
             return path

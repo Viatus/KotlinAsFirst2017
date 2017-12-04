@@ -280,35 +280,7 @@ fun kingTrajectory(start: Square, end: Square): List<Square> {
  * Конь может последовательно пройти через клетки (5, 2) и (4, 4) к клетке (6, 3).
  */
 fun knightMoveNumber(start: Square, end: Square): Int = TODO()
-    /*{
-    if (!start.inside() || !end.inside()) throw IllegalArgumentException()
-    if (start == end) return 0
-    var possibleMoves = listOf<Square>(Square(start.column + 2, start.row + 1), Square(start.column + 1, start.row + 2),
-            Square(start.column - 1, start.row + 2), Square(start.column - 2, start.row + 1),
-            Square(start.column + 1, start.row - 2), Square(start.column + 2, start.row - 1),
-            Square(start.column - 1, start.row - 2), Square(start.column - 2, start.row - 1))
-    var current = start
-    var moveNumber = 0
-    while (current != end) {
-        var min = 8
-        moveNumber++
-        for (i in 0..7) {
-            if (possibleMoves[i] == end){
-                current = end
-                break
-            }
-            if (possibleMoves[i].inside() && kingMoveNumber(possibleMoves[i], end) <= min && possibleMoves[i].column != end.column && possibleMoves[i].row != end.row) {
-                min = kingMoveNumber(possibleMoves[i], end)
-                current = possibleMoves[i]
-            }
-        }
-        possibleMoves = listOf<Square>(Square(current.column + 2, current.row + 1), Square(current.column + 1, current.row + 2),
-                Square(current.column - 1, current.row + 2), Square(current.column - 2, current.row + 1),
-                Square(current.column + 1, current.row - 2), Square(current.column + 2, current.row - 1),
-                Square(current.column - 1, current.row - 2), Square(current.column - 2, current.row - 1))
-    }
-    return moveNumber
-    }*/
+
 
 
 /**

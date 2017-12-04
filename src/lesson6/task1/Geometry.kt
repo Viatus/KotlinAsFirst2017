@@ -95,6 +95,7 @@ data class Circle(val center: Point, val radius: Double) {
 data class Segment(val begin: Point, val end: Point) {
     override fun equals(other: Any?) =
             other is Segment && (begin == other.begin && end == other.end || end == other.begin && begin == other.end)
+
     fun length() = this.begin.distance(this.end)
     override fun hashCode() =
             begin.hashCode() + end.hashCode()
@@ -152,12 +153,8 @@ class Line private constructor(val b: Double, val angle: Double) {
      * Для этого необходимо составить и решить систему из двух уравнений (каждое для своей прямой)
      */
     fun crossPoint(other: Line): Point {
-        val thisCos = Math.cos(this.angle)
-        val otherCos = Math.cos(other.angle)
-        val thisSin = Math.sin(this.angle)
-        val otherSin = Math.sin(other.angle)
-        val x = (other.b * thisCos - this.b * otherCos) / (thisSin * otherCos - otherSin * thisCos)
-        val y = (x * thisSin + this.b) / thisCos
+        val x = (other.b * Math.cos(this.angle) - this.b * Math.cos(other.angle)) / Math.sin(this.angle - other.angle)
+        val y = (other.b * Math.sin(this.angle) - this.b * Math.sin(other.angle)) / Math.sin(this.angle - other.angle)
         return Point(x, y)
     }
 
@@ -199,7 +196,8 @@ fun lineByPoints(a: Point, b: Point): Line {
  */
 fun bisectorByPoints(a: Point, b: Point): Line {
     val biPoint = Point((a.x + b.x) / 2, (a.y + b.y) / 2)
-    val biAngle = Math.asin(Math.abs((a.x - b.x) / a.distance(b)))
+    val biAngle = (lineByPoints(a, b).angle + Math.PI / 2) % Math.PI
+
     return Line(biPoint, biAngle)
 }
 
@@ -236,14 +234,10 @@ fun findNearestCirclePair(vararg circles: Circle): Pair<Circle, Circle> {
  * построить окружность, описанную вокруг треугольника - эквивалентная задача).
  */
 fun circleByThreePoints(a: Point, b: Point, c: Point): Circle {
-    val firstBiSec = bisectorByPoints(a, b)
+    val firstBiSec = bisectorByPoints(a, c)
     val secondBiSec = bisectorByPoints(b, c)
     val center = firstBiSec.crossPoint(secondBiSec)
-    val firstSide = a.distance(b)
-    val secondSide = b.distance(c)
-    val thirdSide = c.distance(a)
-    val halfP = Triangle(a, b, c).halfPerimeter()
-    val radius = firstSide * secondSide * thirdSide / 4 / Math.sqrt(halfP * (halfP - firstSide) * (halfP - secondSide) * (halfP - thirdSide))
+    val radius = center.distance(a)
     return Circle(center, radius)
 }
 
@@ -258,5 +252,41 @@ fun circleByThreePoints(a: Point, b: Point, c: Point): Circle {
  * три точки данного множества, либо иметь своим диаметром отрезок,
  * соединяющий две самые удалённые точки в данном множестве.
  */
-fun minContainingCircle(vararg points: Point): Circle = TODO()
+fun isAllPointsContains(points: Array<out Point>, circle: Circle): Boolean {
+    for (point in points) {
+        if (!circle.contains(point)) return false
+    }
+    return true
+}
+
+fun minContainingCircle(vararg points: Point): Circle {
+    if (points.isEmpty()) throw IllegalArgumentException()
+    if (points.size == 1) return Circle(points[0], 0.0)
+    if (points.size == 2) return circleByDiameter(Segment(points[0], points[1]))
+    var circle = Circle(Point(0.0, 0.0), 0.0)
+    var minRad = Double.MAX_VALUE
+    for (i in 1 until points.size) {
+        for (j in i + 1 until points.size) {
+            val newCircle = circleByDiameter(Segment(points[i], points[j]))
+            if (isAllPointsContains(points, newCircle) && newCircle.radius <= minRad) {
+                circle = newCircle
+                minRad = newCircle.radius
+            }
+        }
+    }
+    for (i in 1 until points.size) {
+        for (j in 1 until points.size) {
+            for (k in 1 until points.size) {
+                if (i != j && j != k && i != k) {
+                    val newCircle = circleByThreePoints(points[i], points[j], points[k])
+                    if (isAllPointsContains(points, newCircle) && newCircle.radius <= minRad) {
+                        circle = newCircle
+                        minRad = newCircle.radius
+                    }
+                }
+            }
+        }
+    }
+    return circle
+}
 

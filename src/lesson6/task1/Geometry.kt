@@ -175,7 +175,8 @@ class Line private constructor(val b: Double, val angle: Double) {
  * Построить прямую по отрезку
  */
 fun lineBySegment(s: Segment): Line {
-    val newAngle = Math.acos(Math.abs((s.begin.x - s.end.x) / s.length()))
+    var newAngle = Math.acos((s.end.x - s.begin.x) / s.length()) % Math.PI
+    if (newAngle < 0) newAngle += Math.PI
     return Line(s.begin, newAngle)
 }
 
@@ -184,10 +185,8 @@ fun lineBySegment(s: Segment): Line {
  *
  * Построить прямую по двум точкам
  */
-fun lineByPoints(a: Point, b: Point): Line {
-    val newAngle = Math.acos(Math.abs((a.x - b.x) / a.distance(b)))
-    return Line(a, newAngle)
-}
+fun lineByPoints(a: Point, b: Point): Line = lineBySegment(Segment(a, b))
+
 
 /**
  * Сложная
@@ -197,7 +196,6 @@ fun lineByPoints(a: Point, b: Point): Line {
 fun bisectorByPoints(a: Point, b: Point): Line {
     val biPoint = Point((a.x + b.x) / 2, (a.y + b.y) / 2)
     val biAngle = (lineByPoints(a, b).angle + Math.PI / 2) % Math.PI
-
     return Line(biPoint, biAngle)
 }
 

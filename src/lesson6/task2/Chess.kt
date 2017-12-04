@@ -23,10 +23,14 @@ data class Square(val column: Int, val row: Int) {
      * Для клетки не в пределах доски вернуть пустую строку
      */
     fun notation(): String {
-        if (!this.inside()) return ""
-        val columnName = ('a' - 1 + column).toString()
-        val rowName = row.toString()
-        return columnName + rowName
+        try {
+            if (!this.inside()) return ""
+            val columnName = ('a' - 1 + column).toString()
+            val rowName = row.toString()
+            return columnName + rowName
+        } catch (e: NumberFormatException) {
+            throw IllegalArgumentException()
+        }
     }
 }
 
@@ -147,7 +151,7 @@ fun bishopMoveNumber(start: Square, end: Square): Int {
 fun bishopTrajectory(start: Square, end: Square): List<Square> = when {
     start == end -> listOf(start)
     (start.column + end.column) % 2 != (start.row + end.row) % 2 -> listOf<Square>()
-    Math.abs(start.column - end.column) == Math.abs(start.row - end.row) || start.column + end.column == start.row + end.row ->
+    Math.abs(start.column - end.column) == Math.abs(start.row - end.row) ->
         listOf(start, end)
     else -> {
         val firstNewCol = (start.column + start.row + end.column - end.row) / 2
@@ -225,30 +229,30 @@ fun kingTrajectory(start: Square, end: Square): List<Square> {
         }
         Math.abs(start.column - end.column) > Math.abs(start.row - end.row) -> {
             val path = mutableListOf<Square>()
-            for (i in 1 until maxOf(start.row, end.row) - minOf(start.row, end.row)) {
+            for (i in 0..maxOf(start.row, end.row) - minOf(start.row, end.row)) {
                 when {
-                    start.row > end.row && start.column > end.column -> path.add(Square(start.column + i, start.row + i))
-                    start.row < end.row && start.column < end.column -> path.add(Square(start.column - i, start.row - i))
+                    start.row > end.row && start.column > end.column -> path.add(Square(start.column - i, start.row - i))
+                    start.row < end.row && start.column < end.column -> path.add(Square(start.column + i, start.row + i))
                     start.row > end.row && start.column < end.column -> path.add(Square(start.column + i, start.row - i))
                     start.row < end.row && start.column > end.column -> path.add(Square(start.column - i, start.row + i))
                 }
             }
-            for (i in start.column + Math.abs(start.row - end.row)..end.column) {
+            for (i in start.column + Math.abs(start.row - end.row) - 1..end.column) {
                 path.add(Square(i, end.row))
             }
             return path
         }
         else -> {
             val path = mutableListOf<Square>()
-            for (i in 0 until maxOf(start.column, end.column) - minOf(start.column, end.column)) {
+            for (i in 0..maxOf(start.column, end.column) - minOf(start.column, end.column)) {
                 when {
-                    start.row > end.row && start.column > end.column -> path.add(Square(start.column + i, start.row + i))
-                    start.row < end.row && start.column < end.column -> path.add(Square(start.column - i, start.row - i))
+                    start.row > end.row && start.column > end.column -> path.add(Square(start.column - i, start.row - i))
+                    start.row < end.row && start.column < end.column -> path.add(Square(start.column + i, start.row + i))
                     start.row > end.row && start.column < end.column -> path.add(Square(start.column + i, start.row - i))
                     start.row < end.row && start.column > end.column -> path.add(Square(start.column - i, start.row + i))
                 }
             }
-            for (i in start.row + start.column - end.column..end.row) {
+            for (i in start.row + Math.abs(start.column - end.column) + 1..end.row) {
                 path.add(Square(end.column, i))
             }
             return path
@@ -280,7 +284,6 @@ fun kingTrajectory(start: Square, end: Square): List<Square> {
  * Конь может последовательно пройти через клетки (5, 2) и (4, 4) к клетке (6, 3).
  */
 fun knightMoveNumber(start: Square, end: Square): Int = TODO()
-
 
 
 /**

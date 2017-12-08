@@ -110,11 +110,14 @@ data class Segment(val begin: Point, val end: Point) {
 fun diameter(vararg points: Point): Segment {
     if (points.size < 2) throw IllegalArgumentException()
     var max = Segment(points[0], points[1])
+    var maxLen = max.length()
     for ((i, firstPoint) in points.withIndex()) {
-        for (secondPointIndex in i + 1 until points.size) {
-            val newDistance = firstPoint.distance(points[secondPointIndex])
-            if (max.length() < newDistance) {
-                max = Segment(firstPoint, points[secondPointIndex])
+        val lastPoints = Sequence { points.iterator() }.drop(i + 1)
+        for (secondPoint in lastPoints) {
+            val newDistance = firstPoint.distance(secondPoint)
+            if (maxLen < newDistance) {
+                max = Segment(firstPoint, secondPoint)
+                maxLen = newDistance
             }
         }
     }
@@ -129,8 +132,8 @@ fun diameter(vararg points: Point): Segment {
  */
 fun circleByDiameter(diameter: Segment): Circle {
     val rad = diameter.length() / 2
-    val cen = Point((diameter.begin.x + diameter.end.x) / 2, (diameter.begin.y + diameter.end.y) / 2)
-    return Circle(cen, rad)
+    val center = Point((diameter.begin.x + diameter.end.x) / 2, (diameter.begin.y + diameter.end.y) / 2)
+    return Circle(center, rad)
 }
 
 /**
@@ -210,11 +213,12 @@ fun findNearestCirclePair(vararg circles: Circle): Pair<Circle, Circle> {
     var min = circles[0].distance(circles[1])
     var minCircles = Pair(circles[0], circles[1])
     for ((i, firstCircle) in circles.withIndex()) {
-        for (secondCircleIndex in i + 1 until circles.size) {
-            val newDistance = firstCircle.distance(circles[secondCircleIndex])
+        val lastCircles = Sequence { circles.iterator() }.drop(i + 1)
+        for (secondCircle in lastCircles) {
+            val newDistance = firstCircle.distance(secondCircle)
             if (min > newDistance) {
                 min = newDistance
-                minCircles = Pair(firstCircle, circles[secondCircleIndex])
+                minCircles = Pair(firstCircle, secondCircle)
             }
         }
     }

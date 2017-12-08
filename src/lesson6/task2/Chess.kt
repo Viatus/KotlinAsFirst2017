@@ -2,6 +2,8 @@
 
 package lesson6.task2
 
+import lesson6.task3.Graph
+
 /**
  * Клетка шахматной доски. Шахматная доска квадратная и имеет 8 х 8 клеток.
  * Поэтому, обе координаты клетки (горизонталь row, вертикаль column) могут находиться в пределах от 1 до 8.
@@ -243,7 +245,7 @@ fun kingTrajectory(start: Square, end: Square): List<Square> {
                     path.add(Square(i, end.row))
                 }
             } else {
-                for (i in end.column..start.column + Math.abs(start.row - end.row) + 1) {
+                for (i in start.column - Math.abs(start.row - end.row) - 1 downTo end.column) {
                     path.add(Square(i, end.row))
                 }
             }
@@ -264,7 +266,7 @@ fun kingTrajectory(start: Square, end: Square): List<Square> {
                     path.add(Square(end.column, i))
                 }
             } else {
-                for (i in end.row..start.row + Math.abs(start.column - end.column) + 1) {
+                for (i in start.row - Math.abs(start.column - end.column) - 1 downTo end.row) {
                     path.add(Square(end.column, i))
                 }
             }
@@ -319,4 +321,6 @@ fun knightMoveNumber(start: Square, end: Square): Int = TODO()
  *
  * Если возможно несколько вариантов самой быстрой траектории, вернуть любой из них.
  */
+
 fun knightTrajectory(start: Square, end: Square): List<Square> = TODO()
+

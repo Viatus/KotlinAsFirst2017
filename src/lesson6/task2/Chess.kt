@@ -220,14 +220,24 @@ fun kingTrajectory(start: Square, end: Square): List<Square> {
         start == end -> return listOf(start)
         start.column == end.column -> {
             val path = mutableListOf<Square>()
-            for (i in minOf(start.row, end.row)..maxOf(start.row, end.row))
-                path.add(Square(start.column, i))
+            if (start.row > end.row) {
+                for (i in start.row downTo end.row)
+                    path.add(Square(start.column, i))
+            } else {
+                for (i in start.row..end.row)
+                    path.add(Square(start.column, i))
+            }
             return path
         }
         start.row == end.row -> {
             val path = mutableListOf<Square>()
-            for (i in minOf(start.column, end.column)..maxOf(start.column, end.column))
-                path.add(Square(i, start.row))
+            if (start.column > end.column) {
+                for (i in start.column downTo end.column)
+                    path.add(Square(i, start.row))
+            } else {
+                for (i in start.column..end.column)
+                    path.add(Square(i, start.row))
+            }
             return path
         }
         Math.abs(start.column - end.column) > Math.abs(start.row - end.row) -> {

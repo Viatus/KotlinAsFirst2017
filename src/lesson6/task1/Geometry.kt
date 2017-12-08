@@ -112,8 +112,7 @@ fun diameter(vararg points: Point): Segment {
     var max = Segment(points[0], points[1])
     var maxLen = max.length()
     for ((i, firstPoint) in points.withIndex()) {
-        val lastPoints = Sequence { points.iterator() }.drop(i + 1)
-        for (secondPoint in lastPoints) {
+        for (secondPoint in points.asSequence().drop(i + 1)) {
             val newDistance = firstPoint.distance(secondPoint)
             if (maxLen < newDistance) {
                 max = Segment(firstPoint, secondPoint)
@@ -156,8 +155,9 @@ class Line private constructor(val b: Double, val angle: Double) {
      * Для этого необходимо составить и решить систему из двух уравнений (каждое для своей прямой)
      */
     fun crossPoint(other: Line): Point {
-        val x = (other.b * Math.cos(this.angle) - this.b * Math.cos(other.angle)) / Math.sin(this.angle - other.angle)
-        val y = (other.b * Math.sin(this.angle) - this.b * Math.sin(other.angle)) / Math.sin(this.angle - other.angle)
+        val dSin = Math.sin(this.angle - other.angle)
+        val x = (other.b * Math.cos(this.angle) - this.b * Math.cos(other.angle)) / dSin
+        val y = (other.b * Math.sin(this.angle) - this.b * Math.sin(other.angle)) / dSin
         return Point(x, y)
     }
 
@@ -213,8 +213,7 @@ fun findNearestCirclePair(vararg circles: Circle): Pair<Circle, Circle> {
     var min = circles[0].distance(circles[1])
     var minCircles = Pair(circles[0], circles[1])
     for ((i, firstCircle) in circles.withIndex()) {
-        val lastCircles = Sequence { circles.iterator() }.drop(i + 1)
-        for (secondCircle in lastCircles) {
+        for (secondCircle in circles.asSequence().drop(i + 1)) {
             val newDistance = firstCircle.distance(secondCircle)
             if (min > newDistance) {
                 min = newDistance
@@ -254,28 +253,12 @@ fun circleByThreePoints(a: Point, b: Point, c: Point): Circle {
  * три точки данного множества, либо иметь своим диаметром отрезок,
  * соединяющий две самые удалённые точки в данном множестве.
  */
-fun isAllPointsContains(points: Array<out Point>, circle: Circle): Boolean {
-    for (point in points) {
-        if (!circle.contains(point)) return false
-    }
-    return true
-}
-
 fun minContainingCircle(vararg points: Point): Circle {
     if (points.isEmpty()) throw IllegalArgumentException()
     if (points.size == 1) return Circle(points[0], 0.0)
     if (points.size == 2) return circleByDiameter(Segment(points[0], points[1]))
     var circle = Circle(Point(0.0, 0.0), 0.0)
     var minRad = Double.MAX_VALUE
-    for (i in 0 until points.size) {
-        for (j in i + 1 until points.size) {
-            val newCircle = circleByDiameter(Segment(points[i], points[j]))
-            if (isAllPointsContains(points, newCircle) && newCircle.radius <= minRad) {
-                circle = newCircle
-                minRad = newCircle.radius
-            }
-        }
-    }
     for (i in 0 until points.size) {
         for (j in 0 until points.size) {
             for (k in 0 until points.size) {
@@ -292,3 +275,9 @@ fun minContainingCircle(vararg points: Point): Circle {
     return circle
 }
 
+fun isAllPointsContains(points: Array<out Point>, circle: Circle): Boolean {
+    for (point in points) {
+        if (!circle.contains(point)) return false
+    }
+    return true
+}

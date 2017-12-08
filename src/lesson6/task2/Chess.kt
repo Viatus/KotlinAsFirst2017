@@ -26,9 +26,7 @@ data class Square(val column: Int, val row: Int) {
      */
     fun notation(): String {
         if (!this.inside()) return ""
-        val columnName = ('a' - 1 + column).toString()
-        val rowName = row.toString()
-        return columnName + rowName
+        return StringBuilder(("")).append('a' - 1 + column).append(row).toString()
     }
 }
 
@@ -40,14 +38,10 @@ data class Square(val column: Int, val row: Int) {
  * Если нотация некорректна, бросить IllegalArgumentException
  */
 fun square(notation: String): Square {
-    try {
-        if (notation.length != 2) throw IllegalArgumentException()
-        val newSquare = Square((notation[0] + 1 - 'a'), notation.substring(1).toInt())
-        if (newSquare.inside()) return newSquare
-        else throw IllegalArgumentException()
-    } catch (e: NumberFormatException) {
-        throw IllegalArgumentException()
-    }
+    if (notation.length != 2) throw IllegalArgumentException()
+    val newSquare = Square((notation[0] + 1 - 'a'), (notation[1] - '0'))
+    if (newSquare.inside()) return newSquare
+    else throw IllegalArgumentException()
 }
 
 /**
@@ -73,11 +67,11 @@ fun square(notation: String): Square {
  * Пример: rookMoveNumber(Square(3, 1), Square(6, 3)) = 2
  * Ладья может пройти через клетку (3, 3) или через клетку (6, 1) к клетке (6, 3).
  */
-fun rookMoveNumber(start: Square, end: Square): Int {
-    if (!start.inside() || !end.inside()) throw IllegalArgumentException()
-    if (start == end) return 0
-    return if (start.row == end.row || start.column == end.column) 1
-    else 2
+fun rookMoveNumber(start: Square, end: Square): Int = when {
+    !start.inside() || !end.inside() -> throw IllegalArgumentException()
+    start == end -> 0
+    start.row == end.row || start.column == end.column -> 1
+    else -> 2
 }
 
 /**
@@ -124,13 +118,14 @@ fun rookTrajectory(start: Square, end: Square): List<Square> {
  * Примеры: bishopMoveNumber(Square(3, 1), Square(6, 3)) = -1; bishopMoveNumber(Square(3, 1), Square(3, 7)) = 2.
  * Слон может пройти через клетку (6, 4) к клетке (3, 7).
  */
-fun bishopMoveNumber(start: Square, end: Square): Int {
-    if (!start.inside() || !end.inside()) throw IllegalArgumentException()
-    if (start == end) return 0
-    if ((start.column + start.row) % 2 != (end.column + end.row) % 2) return -1
-    return if (((Math.abs(start.column - start.row) == Math.abs(end.column - end.row)) || start.column + start.row == end.column + end.row)
-            && start.column != end.column && start.row != end.row) 1
-    else 2
+fun bishopMoveNumber(start: Square, end: Square): Int = when {
+    !start.inside() || !end.inside() -> throw IllegalArgumentException()
+    start == end -> 0
+    (start.column + start.row) % 2 != (end.column + end.row) % 2 -> -1
+    ((Math.abs(start.column - start.row) == Math.abs(end.column - end.row))
+            || start.column + start.row == end.column + end.row)
+            && start.column != end.column && start.row != end.row -> 1
+    else -> 2
 }
 
 /**

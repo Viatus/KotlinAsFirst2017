@@ -26,7 +26,7 @@ data class Square(val column: Int, val row: Int) {
      */
     fun notation(): String {
         if (!this.inside()) return ""
-        return StringBuilder(("")).append('a' - 1 + column).append(row).toString()
+        return StringBuilder().append('a' - 1 + column).append(row).toString()
     }
 }
 

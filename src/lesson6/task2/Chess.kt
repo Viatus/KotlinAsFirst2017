@@ -273,7 +273,7 @@ fun kingTrajectory(start: Square, end: Square): List<Square> {
                     path.add(Square(end.column, i))
                 }
             } else {
-                for (i in start.row - rowDif - 1 downTo end.row) {
+                for (i in start.row - colDif - 1 downTo end.row) {
                     path.add(Square(end.column, i))
                 }
             }

@@ -122,9 +122,7 @@ fun bishopMoveNumber(start: Square, end: Square): Int = when {
     !start.inside() || !end.inside() -> throw IllegalArgumentException()
     start == end -> 0
     (start.column + start.row) % 2 != (end.column + end.row) % 2 -> -1
-    ((Math.abs(start.column - start.row) == Math.abs(end.column - end.row))
-            || start.column + start.row == end.column + end.row)
-            && start.column != end.column && start.row != end.row -> 1
+    Math.abs(start.column - end.column) == Math.abs(start.row - end.row) -> 1
     else -> 2
 }
 
@@ -188,10 +186,12 @@ fun bishopTrajectory(start: Square, end: Square): List<Square> = when {
  */
 fun kingMoveNumber(start: Square, end: Square): Int {
     if (!start.inside() || !end.inside()) throw IllegalArgumentException()
+    val rowDif = Math.abs(start.row - end.row)
+    val colDif = Math.abs(start.column - end.column)
     return when {
         start == end -> 0
-        Math.abs(start.column - end.column) > Math.abs(start.row - end.row) -> Math.abs(start.column - end.column)
-        else -> Math.abs(start.row - end.row)
+        colDif > rowDif -> colDif
+        else -> rowDif
     }
 }
 
@@ -210,6 +210,8 @@ fun kingMoveNumber(start: Square, end: Square): Int {
  * Если возможно несколько вариантов самой быстрой траектории, вернуть любой из них.
  */
 fun kingTrajectory(start: Square, end: Square): List<Square> {
+    val rowDif = Math.abs(start.row - end.row)
+    val colDif = Math.abs(start.column - end.column)
     when {
         !start.inside() || !end.inside() -> throw IllegalArgumentException()
         start == end -> return listOf(start)
@@ -235,7 +237,7 @@ fun kingTrajectory(start: Square, end: Square): List<Square> {
             }
             return path
         }
-        Math.abs(start.column - end.column) > Math.abs(start.row - end.row) -> {
+        colDif > rowDif -> {
             val path = mutableListOf<Square>()
             for (i in 0..maxOf(start.row, end.row) - minOf(start.row, end.row)) {
                 when {
@@ -246,11 +248,11 @@ fun kingTrajectory(start: Square, end: Square): List<Square> {
                 }
             }
             if (end.column > start.column) {
-                for (i in start.column + Math.abs(start.row - end.row) + 1..end.column) {
+                for (i in start.column + rowDif + 1..end.column) {
                     path.add(Square(i, end.row))
                 }
             } else {
-                for (i in start.column - Math.abs(start.row - end.row) - 1 downTo end.column) {
+                for (i in start.column - rowDif - 1 downTo end.column) {
                     path.add(Square(i, end.row))
                 }
             }
@@ -267,11 +269,11 @@ fun kingTrajectory(start: Square, end: Square): List<Square> {
                 }
             }
             if (end.row > start.row) {
-                for (i in start.row + Math.abs(start.column - end.column) + 1..end.row) {
+                for (i in start.row + colDif + 1..end.row) {
                     path.add(Square(end.column, i))
                 }
             } else {
-                for (i in start.row - Math.abs(start.column - end.column) - 1 downTo end.row) {
+                for (i in start.row - rowDif - 1 downTo end.row) {
                     path.add(Square(end.column, i))
                 }
             }

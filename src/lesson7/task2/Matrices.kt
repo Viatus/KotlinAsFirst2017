@@ -1,7 +1,9 @@
 @file:Suppress("UNUSED_PARAMETER")
+
 package lesson7.task2
 
 import lesson7.task1.Matrix
+import lesson7.task1.MatrixImpl
 import lesson7.task1.createMatrix
 
 // Все задачи в этом файле требуют наличия реализации интерфейса "Матрица" в Matrix.kt
@@ -75,7 +77,22 @@ fun generateSpiral(height: Int, width: Int): Matrix<Int> = TODO()
  *  1  2  2  2  2  1
  *  1  1  1  1  1  1
  */
-fun generateRectangles(height: Int, width: Int): Matrix<Int> = TODO()
+fun generateRectangles(height: Int, width: Int): Matrix<Int> {
+    val matrix = createMatrix(height, width, 0)
+    for (i in 1..(height + 1) / 2) {
+        for (j in i - 1..width - i) {
+            matrix[i - 1, j] = i
+            matrix[height - i, j] = i
+        }
+    }
+    for (i in 1..(width + 1) / 2) {
+        for (j in i - 1..height - i) {
+            matrix[j, i - 1] = i
+            matrix[j, width - i] = i
+        }
+    }
+    return matrix
+}
 
 /**
  * Сложная
@@ -118,7 +135,28 @@ fun <E> rotate(matrix: Matrix<E>): Matrix<E> = TODO()
  * 1 2 3
  * 3 1 2
  */
-fun isLatinSquare(matrix: Matrix<Int>): Boolean = TODO()
+fun isLatinSquare(matrix: Matrix<Int>): Boolean {
+    if (matrix.height != matrix.width) return false
+    for (i in 0 until matrix.height) {
+        val hList = mutableMapOf<Int, Int>()
+        val wList = mutableMapOf<Int, Int>()
+        for (k in 1..matrix.width) {
+            wList[i] = 0
+            hList[i] = 0
+        }
+        for (j in 0 until matrix.height) {
+            if (matrix[i, j] !in 1..matrix.width || matrix[j, i] !in 1..matrix.width)
+                return false
+            hList[matrix[i, j]] = 1
+            wList[matrix[j, i]] = 1
+        }
+        for (k in 1..matrix.width) {
+            if (hList[k] == 0 || wList[k] == 0)
+                return false
+        }
+    }
+    return true
+}
 
 /**
  * Средняя
@@ -137,7 +175,24 @@ fun isLatinSquare(matrix: Matrix<Int>): Boolean = TODO()
  *
  * 42 ===> 0
  */
-fun sumNeighbours(matrix: Matrix<Int>): Matrix<Int> = TODO()
+fun sumNeighbours(matrix: Matrix<Int>): Matrix<Int> {
+    val newMatrix = createMatrix(matrix.height, matrix.width, 0)
+    for (i in 0 until matrix.height) {
+        for (j in 0 until matrix.width) {
+            var sum = 0
+            if (i + 1 < matrix.height && j + 1 < matrix.width) sum += matrix[i + 1, j + 1]
+            if (i + 1 < matrix.height && j - 1 >= 0) sum += matrix[i + 1, j - 1]
+            if (i - 1 >= 0 && j + 1 < matrix.width) sum += matrix[i - 1, j + 1]
+            if (i - 1 >= 0 && j - 1 >= 0) sum += matrix[i - 1, j - 1]
+            if (i + 1 < matrix.height) sum += matrix[i + 1, j]
+            if (i - 1 >= 0) sum += matrix[i - 1, j]
+            if (j + 1 < matrix.width) sum += matrix[i, j + 1]
+            if (j - 1 >= 0) sum += matrix[i, j - 1]
+            newMatrix[i, j] = sum
+        }
+    }
+    return newMatrix
+}
 
 /**
  * Средняя

@@ -86,7 +86,7 @@ data class Circle(val center: Point, val radius: Double) {
      *
      * Вернуть true, если и только если окружность содержит данную точку НА себе или ВНУТРИ себя
      */
-    fun contains(p: Point): Boolean = this.center.distance(p) <= this.radius
+    fun contains(p: Point): Boolean = Math.pow(p.x - this.center.x, 2.0) + Math.pow(p.y - this.center.y, 2.0) <= Math.pow(this.radius, 2.0)
 }
 
 /**
@@ -260,7 +260,8 @@ fun minContainingCircle(vararg points: Point): Circle {
     var circle = Circle(Point(0.0, 0.0), 0.0)
     var minRad = Double.MAX_VALUE
     var newCircle = circleByDiameter(diameter(*points))
-    if (isAllPointsContains(points, newCircle) && newCircle.radius <= minRad) {
+    if (isAllPointsContains(points, newCircle)
+            && newCircle.radius <= minRad) {
         circle = newCircle
         minRad = newCircle.radius
     }
@@ -269,7 +270,8 @@ fun minContainingCircle(vararg points: Point): Circle {
             for (k in 0 until points.size) {
                 if (i != j && k != j && k != i) {
                     newCircle = circleByThreePoints(points[i], points[j], points[k])
-                    if (isAllPointsContains(points, newCircle) && newCircle.radius <= minRad) {
+                    if (isAllPointsContains(points, newCircle)
+                            && newCircle.radius <= minRad) {
                         circle = newCircle
                         minRad = newCircle.radius
                     }

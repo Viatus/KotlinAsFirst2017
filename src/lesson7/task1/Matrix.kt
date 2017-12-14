@@ -63,34 +63,20 @@ class MatrixImpl<E>(override val height: Int, override val width: Int, e: E) : M
         }
     }
 
-    override fun get(row: Int, column: Int): E {
-        val currentVal = map[Cell(row, column)]
-        if (currentVal != null)
-            return currentVal
-        throw IllegalArgumentException()
-    }
+    override fun get(row: Int, column: Int): E = get(Cell(row, column))
 
-    override fun get(cell: Cell): E = get(cell.row, cell.column)
 
-    override fun set(row: Int, column: Int, value: E) {
-        if (map[Cell(row, column)] != null)
-            map[Cell(row, column)] = value
-    }
+    override fun get(cell: Cell): E = map[cell] ?: throw IllegalArgumentException()
+
+    override fun set(row: Int, column: Int, value: E) = set(Cell(row, column), value)
 
     override fun set(cell: Cell, value: E) {
-        set(cell.row, cell.column, value)
+        if (map[cell] != null)
+            map[cell] = value
     }
 
-    override fun equals(other: Any?): Boolean {
-        if (other !is MatrixImpl<*> || height != other.height || width != other.width) return false
-        for (i in 0 until height) {
-            for (j in 0 until width) {
-                if (this.map[Cell(i, j)] != other.map[Cell(i, j)])
-                    return false
-            }
-        }
-        return true
-    }
+    override fun equals(other: Any?): Boolean = other is MatrixImpl<*> && height == other.height
+            && width == other.width && map == other.map
 
     override fun toString(): String {
         val sb = StringBuilder()
@@ -109,6 +95,7 @@ class MatrixImpl<E>(override val height: Int, override val width: Int, e: E) : M
         sb.append("]")
         return "$sb"
     }
+
 
     override fun hashCode(): Int {
         var result = height

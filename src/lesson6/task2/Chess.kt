@@ -144,21 +144,31 @@ fun bishopMoveNumber(start: Square, end: Square): Int = when {
  *          bishopTrajectory(Square(1, 3), Square(6, 8)) = listOf(Square(1, 3), Square(6, 8))
  * Если возможно несколько вариантов самой быстрой траектории, вернуть любой из них.
  */
+
+fun createSquare(start: Square, end: Square, isAlternate: Boolean): Square {
+    val newColumn: Int
+    val newRow: Int
+    if (!isAlternate) {
+        newColumn = (start.column + start.row + end.column - end.row) / 2
+        newRow = (start.row + start.column + end.row - end.column) / 2
+    } else {
+        newColumn = (start.column - start.row + end.column + end.row) / 2
+        newRow = (-start.column + start.row + end.column + end.row) / 2
+    }
+    return (Square(newColumn, newRow))
+}
+
 fun bishopTrajectory(start: Square, end: Square): List<Square> = when {
     start == end -> listOf(start)
     (start.column + end.column) % 2 != (start.row + end.row) % 2 -> listOf<Square>()
     Math.abs(start.column - end.column) == Math.abs(start.row - end.row) ->
         listOf(start, end)
     else -> {
-        val firstNewCol = (start.column + start.row + end.column - end.row) / 2
-        val firstNewRow = (start.row + start.column + end.row - end.column) / 2
-        val secondNewCol = (start.column - start.row + end.column + end.row) / 2
-        val secondNewRow = (-start.column + start.row + end.column + end.row) / 2
-        val firstNewSquare = Square(firstNewCol, firstNewRow)
-        val secondNewSquare = Square(secondNewCol, secondNewRow)
+        val NewSquare = createSquare(start, end, false)
+        val alternateNewSquare = createSquare(start, end, true)
         when {
-            firstNewSquare.inside() -> listOf(start, firstNewSquare, end)
-            secondNewSquare.inside() -> listOf(start, secondNewSquare, end)
+            NewSquare.inside() -> listOf(start, NewSquare, end)
+            alternateNewSquare.inside() -> listOf(start, alternateNewSquare, end)
             else -> listOf()
         }
     }
@@ -186,12 +196,11 @@ fun bishopTrajectory(start: Square, end: Square): List<Square> = when {
  */
 fun kingMoveNumber(start: Square, end: Square): Int {
     if (!start.inside() || !end.inside()) throw IllegalArgumentException()
-    val rowDif = Math.abs(start.row - end.row)
-    val colDif = Math.abs(start.column - end.column)
+    val rowDiff = Math.abs(start.row - end.row)
+    val colDiff = Math.abs(start.column - end.column)
     return when {
         start == end -> 0
-        colDif > rowDif -> colDif
-        else -> rowDif
+        else -> maxOf(rowDiff, colDiff)
     }
 }
 
@@ -210,8 +219,8 @@ fun kingMoveNumber(start: Square, end: Square): Int {
  * Если возможно несколько вариантов самой быстрой траектории, вернуть любой из них.
  */
 fun kingTrajectory(start: Square, end: Square): List<Square> {
-    val rowDif = Math.abs(start.row - end.row)
-    val colDif = Math.abs(start.column - end.column)
+    val rowDiff = Math.abs(start.row - end.row)
+    val colDiff = Math.abs(start.column - end.column)
     when {
         !start.inside() || !end.inside() -> throw IllegalArgumentException()
         start == end -> return listOf(start)
@@ -237,7 +246,7 @@ fun kingTrajectory(start: Square, end: Square): List<Square> {
             }
             return path
         }
-        colDif > rowDif -> {
+        colDiff > rowDiff -> {
             val path = mutableListOf<Square>()
             for (i in 0..maxOf(start.row, end.row) - minOf(start.row, end.row)) {
                 when {
@@ -248,11 +257,11 @@ fun kingTrajectory(start: Square, end: Square): List<Square> {
                 }
             }
             if (end.column > start.column) {
-                for (i in start.column + rowDif + 1..end.column) {
+                for (i in start.column + rowDiff + 1..end.column) {
                     path.add(Square(i, end.row))
                 }
             } else {
-                for (i in start.column - rowDif - 1 downTo end.column) {
+                for (i in start.column - rowDiff - 1 downTo end.column) {
                     path.add(Square(i, end.row))
                 }
             }
@@ -269,11 +278,11 @@ fun kingTrajectory(start: Square, end: Square): List<Square> {
                 }
             }
             if (end.row > start.row) {
-                for (i in start.row + colDif + 1..end.row) {
+                for (i in start.row + colDiff + 1..end.row) {
                     path.add(Square(end.column, i))
                 }
             } else {
-                for (i in start.row - colDif - 1 downTo end.row) {
+                for (i in start.row - colDiff - 1 downTo end.row) {
                     path.add(Square(end.column, i))
                 }
             }

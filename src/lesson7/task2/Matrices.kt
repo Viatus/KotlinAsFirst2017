@@ -138,20 +138,16 @@ fun <E> rotate(matrix: Matrix<E>): Matrix<E> = TODO()
 fun isLatinSquare(matrix: Matrix<Int>): Boolean {
     if (matrix.height != matrix.width) return false
     for (i in 0 until matrix.height) {
-        val hList = mutableMapOf<Int, Int>()
-        val wList = mutableMapOf<Int, Int>()
-        for (k in 1..matrix.width) {
-            wList[i] = 0
-            hList[i] = 0
-        }
+        val hList = mutableSetOf<Int>()
+        val wList = mutableSetOf<Int>()
         for (j in 0 until matrix.height) {
             if (matrix[i, j] !in 1..matrix.width || matrix[j, i] !in 1..matrix.width)
                 return false
-            hList[matrix[i, j]] = 1
-            wList[matrix[j, i]] = 1
+            hList.add(matrix[i, j])
+            wList.add(matrix[j, i])
         }
         for (k in 1..matrix.width) {
-            if (hList[k] == 0 || wList[k] == 0)
+            if (k !in hList || k !in wList)
                 return false
         }
     }
@@ -180,14 +176,38 @@ fun sumNeighbours(matrix: Matrix<Int>): Matrix<Int> {
     for (i in 0 until matrix.height) {
         for (j in 0 until matrix.width) {
             var sum = 0
-            if (i + 1 < matrix.height && j + 1 < matrix.width) sum += matrix[i + 1, j + 1]
-            if (i + 1 < matrix.height && j - 1 >= 0) sum += matrix[i + 1, j - 1]
-            if (i - 1 >= 0 && j + 1 < matrix.width) sum += matrix[i - 1, j + 1]
-            if (i - 1 >= 0 && j - 1 >= 0) sum += matrix[i - 1, j - 1]
-            if (i + 1 < matrix.height) sum += matrix[i + 1, j]
-            if (i - 1 >= 0) sum += matrix[i - 1, j]
-            if (j + 1 < matrix.width) sum += matrix[i, j + 1]
-            if (j - 1 >= 0) sum += matrix[i, j - 1]
+            try {
+                sum += matrix[i + 1, j + 1]
+            } catch (e: IllegalArgumentException) {
+            }
+            try {
+                sum += matrix[i + 1, j - 1]
+            } catch (e: IllegalArgumentException) {
+            }
+            try {
+                sum += matrix[i - 1, j + 1]
+            } catch (e: IllegalArgumentException) {
+            }
+            try {
+                sum += matrix[i - 1, j - 1]
+            } catch (e: IllegalArgumentException) {
+            }
+            try {
+                sum += matrix[i + 1, j]
+            } catch (e: IllegalArgumentException) {
+            }
+            try {
+                sum += matrix[i - 1, j]
+            } catch (e: IllegalArgumentException) {
+            }
+            try {
+                sum += matrix[i, j + 1]
+            } catch (e: IllegalArgumentException) {
+            }
+            try {
+                sum += matrix[i, j - 1]
+            } catch (e: IllegalArgumentException) {
+            }
             newMatrix[i, j] = sum
         }
     }

@@ -219,76 +219,36 @@ fun kingMoveNumber(start: Square, end: Square): Int {
  * Если возможно несколько вариантов самой быстрой траектории, вернуть любой из них.
  */
 fun kingTrajectory(start: Square, end: Square): List<Square> {
-    val rowDiff = Math.abs(start.row - end.row)
-    val colDiff = Math.abs(start.column - end.column)
-    when {
-        !start.inside() || !end.inside() -> throw IllegalArgumentException()
-        start == end -> return listOf(start)
-        start.column == end.column -> {
-            val path = mutableListOf<Square>()
-            if (start.row > end.row) {
-                for (i in start.row downTo end.row)
-                    path.add(Square(start.column, i))
-            } else {
-                for (i in start.row..end.row)
-                    path.add(Square(start.column, i))
-            }
-            return path
-        }
-        start.row == end.row -> {
-            val path = mutableListOf<Square>()
-            if (start.column > end.column) {
-                for (i in start.column downTo end.column)
-                    path.add(Square(i, start.row))
-            } else {
-                for (i in start.column..end.column)
-                    path.add(Square(i, start.row))
-            }
-            return path
-        }
-        colDiff > rowDiff -> {
-            val path = mutableListOf<Square>()
-            for (i in 0..maxOf(start.row, end.row) - minOf(start.row, end.row)) {
-                when {
-                    start.row > end.row && start.column > end.column -> path.add(Square(start.column - i, start.row - i))
-                    start.row < end.row && start.column < end.column -> path.add(Square(start.column + i, start.row + i))
-                    start.row > end.row && start.column < end.column -> path.add(Square(start.column + i, start.row - i))
-                    start.row < end.row && start.column > end.column -> path.add(Square(start.column - i, start.row + i))
-                }
-            }
-            if (end.column > start.column) {
-                for (i in start.column + rowDiff + 1..end.column) {
-                    path.add(Square(i, end.row))
-                }
-            } else {
-                for (i in start.column - rowDiff - 1 downTo end.column) {
-                    path.add(Square(i, end.row))
-                }
-            }
-            return path
-        }
-        else -> {
-            val path = mutableListOf<Square>()
-            for (i in 0..maxOf(start.column, end.column) - minOf(start.column, end.column)) {
-                when {
-                    start.row > end.row && start.column > end.column -> path.add(Square(start.column - i, start.row - i))
-                    start.row < end.row && start.column < end.column -> path.add(Square(start.column + i, start.row + i))
-                    start.row > end.row && start.column < end.column -> path.add(Square(start.column + i, start.row - i))
-                    start.row < end.row && start.column > end.column -> path.add(Square(start.column - i, start.row + i))
-                }
-            }
-            if (end.row > start.row) {
-                for (i in start.row + colDiff + 1..end.row) {
-                    path.add(Square(end.column, i))
-                }
-            } else {
-                for (i in start.row - colDiff - 1 downTo end.row) {
-                    path.add(Square(end.column, i))
-                }
-            }
-            return path
+    val path = mutableListOf<Square>(start)
+    val minDiff = minOf(Math.abs(start.column - end.column), Math.abs(start.row - end.row))
+    val maxDiff = maxOf(Math.abs(start.column - end.column), Math.abs(start.row - end.row))
+    if (minDiff != 0 && maxDiff != 0) {
+        for (i in 1..minDiff) {
+            val newRow = start.row - i * (start.row - end.row) / Math.abs(start.row - end.row)
+            val newColumn = start.column - i * (start.column - end.column) / Math.abs(start.column - end.column)
+            path.add(Square(newColumn, newRow))
         }
     }
+    path.addAll(straightWay(path.last(), end))
+    return path
+}
+
+fun straightWay(start: Square, end: Square): List<Square> {
+    val straightPath = mutableListOf<Square>()
+    if (start.row - end.row == 0) {
+        for (i in 1..Math.abs(start.column - end.column)) {
+            straightPath.add(Square(start.column - i * (start.column - end.column) / Math.abs(start.column - end.column), start.row))
+        }
+    } else {
+        if (start.column - end.column == 0) {
+            for (i in 1..Math.abs(start.row - end.row)) {
+                straightPath.add(Square(start.column, start.row - i * (start.row - end.row) / Math.abs(start.row - end.row)))
+            }
+        } else {
+            return listOf()
+        }
+    }
+    return straightPath
 }
 
 /**

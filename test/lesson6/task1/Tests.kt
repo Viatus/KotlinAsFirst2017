@@ -47,7 +47,7 @@ class Tests {
 
     private fun approxEquals(expected: Line, actual: Line, delta: Double): Boolean =
             Math.abs(expected.angle - actual.angle) <= delta &&
-            Math.abs(expected.b - actual.b) <= delta
+                    Math.abs(expected.b - actual.b) <= delta
 
     private fun assertApproxEquals(expected: Line, actual: Line, delta: Double = Math.ulp(10.0)) {
         assertTrue(approxEquals(expected, actual, delta))
@@ -209,7 +209,7 @@ class Tests {
         val p6 = Point(0.0, 5.0)
         val result = minContainingCircle(p1, p2, p3, p4, p5, p6)
         assertEquals(4.0, result.radius, 0.02)
-        for (p in listOf(p1, p2, p3, p4, p5, p6)) {
+        for (p in listOf(p1, p2, p3, p4)) {
             assertTrue(result.contains(p))
         }
     }

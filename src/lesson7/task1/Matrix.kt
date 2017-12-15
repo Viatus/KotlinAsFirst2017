@@ -80,19 +80,13 @@ class MatrixImpl<E>(override val height: Int, override val width: Int, e: E) : M
 
     override fun toString(): String {
         val sb = StringBuilder()
-        sb.append("[")
+        val seq = List<MutableList<E>>(height) { mutableListOf() }
         for (row in 0 until height) {
-            sb.append("[")
             for (column in 0 until width) {
-                sb.append(this[row, column])
-                if (column != width - 1)
-                    sb.append(", ")
+                seq[row].add((this[row, column]))
             }
-            sb.append("]")
-            if (row != height - 1)
-                sb.append(", ")
         }
-        sb.append("]")
+        sb.append("[").append(seq.joinToString(", ")).append("]")
         return "$sb"
     }
 

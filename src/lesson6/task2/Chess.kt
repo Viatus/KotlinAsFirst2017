@@ -164,11 +164,11 @@ fun bishopTrajectory(start: Square, end: Square): List<Square> = when {
     Math.abs(start.column - end.column) == Math.abs(start.row - end.row) ->
         listOf(start, end)
     else -> {
-        val NewSquare = createSquare(start, end, false)
-        val alternateNewSquare = createSquare(start, end, true)
+        val midSquare = createSquare(start, end, false)
+        val alternateMidSquare = createSquare(start, end, true)
         when {
-            NewSquare.inside() -> listOf(start, NewSquare, end)
-            alternateNewSquare.inside() -> listOf(start, alternateNewSquare, end)
+            midSquare.inside() -> listOf(start, midSquare, end)
+            alternateMidSquare.inside() -> listOf(start, alternateMidSquare, end)
             else -> listOf()
         }
     }

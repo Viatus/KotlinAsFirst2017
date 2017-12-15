@@ -260,7 +260,7 @@ fun minContainingCircle(vararg points: Point): Circle {
     var circle = Circle(Point(0.0, 0.0), 0.0)
     var minRad = Double.MAX_VALUE
     var newCircle = circleByDiameter(diameter(*points))
-    if (isAllPointsContains(points, newCircle, listOf(diameter(*points).begin, diameter(*points).end))
+    if (isAllPointsContains(points, newCircle/*, listOf(diameter(*points).begin, diameter(*points).end)*/)
             && newCircle.radius <= minRad) {
         circle = newCircle
         minRad = newCircle.radius
@@ -270,7 +270,7 @@ fun minContainingCircle(vararg points: Point): Circle {
             for (k in 0 until points.size) {
                 if (i != j && k != j && k != i) {
                     newCircle = circleByThreePoints(points[i], points[j], points[k])
-                    if (isAllPointsContains(points, newCircle, listOf(points[i], points[j], points[k]))
+                    if (isAllPointsContains(points, newCircle/*, listOf(points[i], points[j], points[k])*/)
                             && newCircle.radius <= minRad) {
                         circle = newCircle
                         minRad = newCircle.radius
@@ -282,9 +282,9 @@ fun minContainingCircle(vararg points: Point): Circle {
     return circle
 }
 
-fun isAllPointsContains(points: Array<out Point>, circle: Circle, creators: List<Point>): Boolean {
+fun isAllPointsContains(points: Array<out Point>, circle: Circle/*, creators: List<Point>*/): Boolean {
     for (point in points) {
-        if (!circle.contains(point) && point !in creators) return false
+        if (!circle.contains(point) /*&& point !in creators*/) return false
     }
     return true
 }

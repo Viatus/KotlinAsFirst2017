@@ -237,12 +237,14 @@ fun straightWay(start: Square, end: Square): List<Square> {
     val straightPath = mutableListOf<Square>()
     if (start.row - end.row == 0) {
         for (i in 1..Math.abs(start.column - end.column)) {
-            straightPath.add(Square(start.column - i * (start.column - end.column) / Math.abs(start.column - end.column), start.row))
+            val newCol = start.column - i * (start.column - end.column) / Math.abs(start.column - end.column)
+            straightPath.add(Square(newCol, start.row))
         }
     } else {
         if (start.column - end.column == 0) {
             for (i in 1..Math.abs(start.row - end.row)) {
-                straightPath.add(Square(start.column, start.row - i * (start.row - end.row) / Math.abs(start.row - end.row)))
+                val newRow = start.row - i * (start.row - end.row) / Math.abs(start.row - end.row)
+                straightPath.add(Square(start.column, newRow))
             }
         } else {
             return listOf()

@@ -1,4 +1,5 @@
 @file:Suppress("UNUSED_PARAMETER")
+
 package lesson8.task1
 
 import java.io.File
@@ -31,8 +32,7 @@ fun alignFile(inputName: String, lineLength: Int, outputName: String) {
                 if (word.length + currentLineLength >= lineLength) {
                     outputStream.newLine()
                     currentLineLength = 0
-                }
-                else {
+                } else {
                     outputStream.write(" ")
                     currentLineLength++
                 }
@@ -53,7 +53,9 @@ fun alignFile(inputName: String, lineLength: Int, outputName: String) {
  * Регистр букв игнорировать, то есть буквы е и Е считать одинаковыми.
  *
  */
-fun countSubstrings(inputName: String, substrings: List<String>): Map<String, Int> = TODO()
+fun countSubstrings(inputName: String, substrings: List<String>): Map<String, Int> {
+    TODO()
+}
 
 
 /**
@@ -70,7 +72,31 @@ fun countSubstrings(inputName: String, substrings: List<String>): Map<String, In
  *
  */
 fun sibilants(inputName: String, outputName: String) {
-    TODO()
+    val outputStream = File(outputName).bufferedWriter()
+    for (line in File(inputName).readLines()) {
+        for ((i, letter) in line.withIndex()) {
+            if (i != 0) {
+                if ((letter in listOf('ы', 'Ы', 'я', 'Я', 'ю', 'Ю')
+                        && line[i - 1] in listOf('ж', 'Ж', 'ч', 'Ч', 'ш', 'Ш', 'щ', 'Щ')))
+                    continue
+            }
+            if (letter in listOf('ж', 'Ж', 'ч', 'Ч', 'ш', 'Ш', 'щ', 'Щ') && i != line.length - 1) {
+                when (line[i + 1]) {
+                    'ы' -> outputStream.write(StringBuilder(letter.toString()).append("и").toString())
+                    'Ы' -> outputStream.write(StringBuilder(letter.toString()).append("И").toString())
+                    'я' -> outputStream.write(StringBuilder(letter.toString()).append("а").toString())
+                    'Я' -> outputStream.write(StringBuilder(letter.toString()).append("А").toString())
+                    'ю' -> outputStream.write(StringBuilder(letter.toString()).append("у").toString())
+                    'Ю' -> outputStream.write(StringBuilder(letter.toString()).append("У").toString())
+                    else -> outputStream.write(letter.toString())
+                }
+            } else {
+                outputStream.write(letter.toString())
+            }
+        }
+        outputStream.newLine()
+    }
+    outputStream.close()
 }
 
 /**
@@ -168,7 +194,25 @@ fun top20Words(inputName: String): Map<String, Int> = TODO()
  * Обратите внимание: данная функция не имеет возвращаемого значения
  */
 fun transliterate(inputName: String, dictionary: Map<Char, String>, outputName: String) {
-    TODO()
+    val outputStream = File(outputName).bufferedWriter()
+    for (line in File(inputName).readLines()) {
+        for (letter in line) {
+            var isInDictionary = false
+            for ((i, str) in dictionary) {
+                if (letter.toLowerCase() == i.toLowerCase()) {
+                    if (letter != i.toLowerCase())
+                        outputStream.write(str.capitalize())
+                    else
+                        outputStream.write(str)
+                    isInDictionary = true
+                }
+            }
+            if (!isInDictionary)
+                outputStream.write(letter.toString())
+        }
+        outputStream.newLine()
+    }
+    outputStream.close()
 }
 
 /**
@@ -229,21 +273,118 @@ Suspendisse ~~et elit in enim tempus iaculis~~.
  *
  * Соответствующий выходной файл:
 <html>
-    <body>
-        <p>
-            Lorem ipsum <i>dolor sit amet</i>, consectetur <b>adipiscing</b> elit.
-            Vestibulum lobortis. <s>Est vehicula rutrum <i>suscipit</i></s>, ipsum <s>lib</s>ero <i>placerat <b>tortor</b></i>.
-        </p>
-        <p>
-            Suspendisse <s>et elit in enim tempus iaculis</s>.
-        </p>
-    </body>
+<body>
+<p>
+Lorem ipsum <i>dolor sit amet</i>, consectetur <b>adipiscing</b> elit.
+Vestibulum lobortis. <s>Est vehicula rutrum <i>suscipit</i></s>, ipsum <s>lib</s>ero <i>placerat <b>tortor</b></i>.
+</p>
+<p>
+Suspendisse <s>et elit in enim tempus iaculis</s>.
+</p>
+</body>
 </html>
  *
  * (Отступы и переносы строк в примере добавлены для наглядности, при решении задачи их реализовывать не обязательно)
  */
 fun markdownToHtmlSimple(inputName: String, outputName: String) {
-    TODO()
+    val outputStream = File(outputName).bufferedWriter()
+    outputStream.write("<html>\n<body>\n<p>\n")
+    for (line in File(inputName).readLines()) {
+        if (line.isBlank())
+            outputStream.write("</p>\n<p>")
+        var countI = 0
+        var countS = 0
+        var countB = 0
+        for ((i, letter) in line.withIndex()) {
+            var flag = true
+            try {
+                if (letter == '*' && line[i + 1] == '*' && line[i + 2] == '*') {
+                    if (countB == 0) {
+                        outputStream.write("<b>")
+                        countB++
+                    } else {
+                        outputStream.write("</b>")
+                        countB--
+                    }
+                    if (countI == 0) {
+                        outputStream.write("<i>")
+                        countI++
+                    } else {
+                        outputStream.write("</i>")
+                        countI--
+                    }
+                    flag = false
+                }
+            } catch (e: IndexOutOfBoundsException) {
+            }
+            try {
+                if (letter == '*' && line[i + 1] == '*' && flag && line[i - 1] != '*') {
+                    if (countB == 0) {
+                        outputStream.write("<b>")
+                        countB++
+                        flag = false
+                    } else {
+                        outputStream.write("</b>")
+                        countB--
+                        flag = false
+                    }
+                }
+            } catch (e: IndexOutOfBoundsException) {
+                if (i == 0)
+                    if (countB == 0) {
+                        outputStream.write("<b>")
+                        countB++
+                        flag = false
+                    } else {
+                        outputStream.write("</b>")
+                        countB--
+                        flag = false
+                    }
+            }
+            try {
+                if (letter == '*' && flag && line[i - 1] != '*') {
+                    if (countI == 0) {
+                        outputStream.write("<i>")
+                        countI++
+                        flag = false
+                    } else {
+                        outputStream.write("</i>")
+                        countI--
+                        flag = false
+                    }
+                }
+            } catch (e: IndexOutOfBoundsException) {
+                if (countI == 0) {
+                    outputStream.write("<i>")
+                    countI++
+                    flag = false
+                } else {
+                    outputStream.write("</i>")
+                    countI--
+                    flag = false
+                }
+            }
+            try {
+                if (letter == '~' && line[i + 1] == '~') {
+                    if (countS == 0) {
+                        outputStream.write("<s>")
+                        countS++
+                        flag = false
+                    } else {
+                        outputStream.write("</s>")
+                        countS--
+                        flag = false
+                    }
+                }
+            } catch (e: IndexOutOfBoundsException) {
+            }
+            if (flag && letter !in listOf('*', '~'))
+                outputStream.write(letter.toString())
+        }
+        outputStream.newLine()
+    }
+    outputStream.write("</p>\n</body>\n</html>")
+    outputStream.close()
 }
 
 /**
@@ -280,61 +421,61 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
  *
  * Пример входного файла:
 ///////////////////////////////начало файла/////////////////////////////////////////////////////////////////////////////
-* Утка по-пекински
-    * Утка
-    * Соус
-* Салат Оливье
-    1. Мясо
-        * Или колбаса
-    2. Майонез
-    3. Картофель
-    4. Что-то там ещё
-* Помидоры
-* Фрукты
-    1. Бананы
-    23. Яблоки
-        1. Красные
-        2. Зелёные
+ * Утка по-пекински
+ * Утка
+ * Соус
+ * Салат Оливье
+1. Мясо
+ * Или колбаса
+2. Майонез
+3. Картофель
+4. Что-то там ещё
+ * Помидоры
+ * Фрукты
+1. Бананы
+23. Яблоки
+1. Красные
+2. Зелёные
 ///////////////////////////////конец файла//////////////////////////////////////////////////////////////////////////////
  *
  *
  * Соответствующий выходной файл:
 ///////////////////////////////начало файла/////////////////////////////////////////////////////////////////////////////
 <html>
-  <body>
-    <ul>
-      <li>
-        Утка по-пекински
-        <ul>
-          <li>Утка</li>
-          <li>Соус</li>
-        </ul>
-      </li>
-      <li>
-        Салат Оливье
-        <ol>
-          <li>Мясо
-            <ul>
-              <li>
-                  Или колбаса
-              </li>
-            </ul>
-          </li>
-          <li>Майонез</li>
-          <li>Картофель</li>
-          <li>Что-то там ещё</li>
-        </ol>
-      </li>
-      <li>Помидоры</li>
-      <li>
-        Яблоки
-        <ol>
-          <li>Красные</li>
-          <li>Зелёные</li>
-        </ol>
-      </li>
-    </ul>
-  </body>
+<body>
+<ul>
+<li>
+Утка по-пекински
+<ul>
+<li>Утка</li>
+<li>Соус</li>
+</ul>
+</li>
+<li>
+Салат Оливье
+<ol>
+<li>Мясо
+<ul>
+<li>
+Или колбаса
+</li>
+</ul>
+</li>
+<li>Майонез</li>
+<li>Картофель</li>
+<li>Что-то там ещё</li>
+</ol>
+</li>
+<li>Помидоры</li>
+<li>
+Яблоки
+<ol>
+<li>Красные</li>
+<li>Зелёные</li>
+</ol>
+</li>
+</ul>
+</body>
 </html>
 ///////////////////////////////конец файла//////////////////////////////////////////////////////////////////////////////
  * (Отступы и переносы строк в примере добавлены для наглядности, при решении задачи их реализовывать не обязательно)
@@ -361,23 +502,23 @@ fun markdownToHtml(inputName: String, outputName: String) {
  * Вывести в выходной файл процесс умножения столбиком числа lhv (> 0) на число rhv (> 0).
  *
  * Пример (для lhv == 19935, rhv == 111):
-   19935
-*    111
+19935
+ *    111
 --------
-   19935
+19935
 + 19935
 +19935
 --------
- 2212785
+2212785
  * Используемые пробелы, отступы и дефисы должны в точности соответствовать примеру.
  * Нули в множителе обрабатывать так же, как и остальные цифры:
-  235
-*  10
+235
+ *  10
 -----
-    0
+0
 +235
 -----
- 2350
+2350
  *
  */
 fun printMultiplicationProcess(lhv: Int, rhv: Int, outputName: String) {
@@ -391,16 +532,16 @@ fun printMultiplicationProcess(lhv: Int, rhv: Int, outputName: String) {
  * Вывести в выходной файл процесс деления столбиком числа lhv (> 0) на число rhv (> 0).
  *
  * Пример (для lhv == 19935, rhv == 22):
-  19935 | 22
- -198     906
- ----
-    13
-    -0
-    --
-    135
-   -132
-   ----
-      3
+19935 | 22
+-198     906
+----
+13
+-0
+--
+135
+-132
+----
+3
 
  * Используемые пробелы, отступы и дефисы должны в точности соответствовать примеру.
  *

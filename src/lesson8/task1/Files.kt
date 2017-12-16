@@ -304,8 +304,12 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
             try {
                 if (letter == '*' && line[j + 1] == '*' && line[j + 2] == '*') {
                     if (countB == 0) {
-                        outputStream.write("<b>")
-                        countB++
+                        if (""".*\*\*\*.*\*\*\*.*""".toRegex().matches(line.substring(j))) {
+                            outputStream.write("<b>")
+                            countB++
+                        } else {
+                            outputStream.write("*")
+                        }
                     } else {
                         outputStream.write("</b>")
                         countB--
@@ -324,63 +328,88 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
             try {
                 if (letter == '*' && line[j + 1] == '*' && flag && line[j - 1] != '*') {
                     if (countB == 0) {
-                        outputStream.write("<b>")
-                        countB++
-                        flag = false
+                        if (""".*\*\*.*\*\*.*""".toRegex().matches(line.substring(j))) {
+                            outputStream.write("<b>")
+                            countB++
+                        } else {
+                            outputStream.write("*")
+                        }
                     } else {
                         outputStream.write("</b>")
                         countB--
-                        flag = false
                     }
+
+                    flag = false
                 }
             } catch (e: IndexOutOfBoundsException) {
-                if (j == 0)
+                if (j == 0) {
                     if (countB == 0) {
-                        outputStream.write("<b>")
-                        countB++
-                        flag = false
+                        if (""".*\*\*.*\*\*.*""".toRegex().matches(line.substring(j))) {
+                            outputStream.write("<b>")
+                            countB++
+                        } else {
+                            outputStream.write("*")
+                        }
                     } else {
                         outputStream.write("</b>")
                         countB--
-                        flag = false
                     }
+                }
+                flag = false
             }
             try {
                 if (letter == '*' && flag && line[j - 1] != '*') {
                     if (countI == 0) {
-                        outputStream.write("<i>")
-                        countI++
-                        flag = false
+                        if (""".*\*.*\*.*""".toRegex().matches(line.substring(j))) {
+                            outputStream.write("<i>")
+                            countI++
+                        } else {
+                            outputStream.write("*")
+                        }
                     } else {
                         outputStream.write("</i>")
                         countI--
-                        flag = false
                     }
+                    flag = false
                 }
             } catch (e: IndexOutOfBoundsException) {
                 if (countI == 0) {
-                    outputStream.write("<i>")
-                    countI++
-                    flag = false
+                    if (""".*\*.*\*.*""".toRegex().matches(line.substring(j))) {
+                        outputStream.write("<i>")
+                        countI++
+                    } else {
+                        outputStream.write("*")
+                    }
                 } else {
                     outputStream.write("</i>")
                     countI--
-                    flag = false
                 }
+                flag = false
             }
             try {
                 if (letter == '~' && line[j + 1] == '~') {
                     if (countS == 0) {
-                        outputStream.write("<s>")
-                        countS++
-                        flag = false
+                        if (""".*~~.*~~.*""".toRegex().matches(line.substring(j))) {
+                            outputStream.write("<s>")
+                            countS++
+                        } else {
+                            outputStream.write("~")
+                        }
                     } else {
                         outputStream.write("</s>")
                         countS--
-                        flag = false
                     }
+                    flag = false
+                }
+                if (letter == '~' && flag && line[j - 1] != '~') {
+                    outputStream.write("~")
+                    flag = false
                 }
             } catch (e: IndexOutOfBoundsException) {
+                if (letter == '~') {
+                    outputStream.write("~")
+                    flag = false
+                }
             }
             if (flag && letter !in listOf('*', '~'))
                 outputStream.write(letter.toString())

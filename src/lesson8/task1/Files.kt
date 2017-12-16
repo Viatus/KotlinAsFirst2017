@@ -195,7 +195,7 @@ fun top20Words(inputName: String): Map<String, Int> = TODO()
  */
 fun transliterate(inputName: String, dictionary: Map<Char, String>, outputName: String) {
     val outputStream = File(outputName).bufferedWriter()
-    for (line in File(inputName).readLines()) {
+    for ((j, line) in File(inputName).readLines().withIndex()) {
         for (letter in line) {
             var isInDictionary = false
             for ((i, str) in dictionary) {
@@ -210,10 +210,11 @@ fun transliterate(inputName: String, dictionary: Map<Char, String>, outputName: 
             if (!isInDictionary)
                 outputStream.write(letter.toString())
         }
-        if (dictionary['\n'] != null)
-            outputStream.write(dictionary['\n'])
-        else
-            outputStream.newLine()
+        if (j != File(inputName).readLines().size - 1)
+            if (dictionary['\n'] != null)
+                outputStream.write(dictionary['\n'])
+            else
+                outputStream.newLine()
     }
     outputStream.close()
 }
@@ -291,17 +292,17 @@ Suspendisse <s>et elit in enim tempus iaculis</s>.
  */
 fun markdownToHtmlSimple(inputName: String, outputName: String) {
     val outputStream = File(outputName).bufferedWriter()
-    outputStream.write("<html><body><p>\n")
-    for (line in File(inputName).readLines()) {
+    outputStream.write("<html><body><p>")
+    for ((i, line) in File(inputName).readLines().withIndex()) {
         if (line.isBlank())
             outputStream.write("</p><p>")
         var countI = 0
         var countS = 0
         var countB = 0
-        for ((i, letter) in line.withIndex()) {
+        for ((j, letter) in line.withIndex()) {
             var flag = true
             try {
-                if (letter == '*' && line[i + 1] == '*' && line[i + 2] == '*') {
+                if (letter == '*' && line[j + 1] == '*' && line[j + 2] == '*') {
                     if (countB == 0) {
                         outputStream.write("<b>")
                         countB++
@@ -321,7 +322,7 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
             } catch (e: IndexOutOfBoundsException) {
             }
             try {
-                if (letter == '*' && line[i + 1] == '*' && flag && line[i - 1] != '*') {
+                if (letter == '*' && line[j + 1] == '*' && flag && line[j - 1] != '*') {
                     if (countB == 0) {
                         outputStream.write("<b>")
                         countB++
@@ -333,7 +334,7 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
                     }
                 }
             } catch (e: IndexOutOfBoundsException) {
-                if (i == 0)
+                if (j == 0)
                     if (countB == 0) {
                         outputStream.write("<b>")
                         countB++
@@ -345,7 +346,7 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
                     }
             }
             try {
-                if (letter == '*' && flag && line[i - 1] != '*') {
+                if (letter == '*' && flag && line[j - 1] != '*') {
                     if (countI == 0) {
                         outputStream.write("<i>")
                         countI++
@@ -368,7 +369,7 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
                 }
             }
             try {
-                if (letter == '~' && line[i + 1] == '~') {
+                if (letter == '~' && line[j + 1] == '~') {
                     if (countS == 0) {
                         outputStream.write("<s>")
                         countS++
@@ -384,7 +385,8 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
             if (flag && letter !in listOf('*', '~'))
                 outputStream.write(letter.toString())
         }
-        outputStream.newLine()
+        if (i != File(inputName).readLines().size - 1)
+            outputStream.newLine()
     }
     outputStream.write("</p></body></html>")
     outputStream.close()

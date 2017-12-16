@@ -210,7 +210,10 @@ fun transliterate(inputName: String, dictionary: Map<Char, String>, outputName: 
             if (!isInDictionary)
                 outputStream.write(letter.toString())
         }
-        outputStream.newLine()
+        if (dictionary['\n'] != null)
+            outputStream.write(dictionary['\n'])
+        else
+            outputStream.newLine()
     }
     outputStream.close()
 }
@@ -288,10 +291,10 @@ Suspendisse <s>et elit in enim tempus iaculis</s>.
  */
 fun markdownToHtmlSimple(inputName: String, outputName: String) {
     val outputStream = File(outputName).bufferedWriter()
-    outputStream.write("<html>\n<body>\n<p>\n")
+    outputStream.write("<html><body><p>\n")
     for (line in File(inputName).readLines()) {
         if (line.isBlank())
-            outputStream.write("</p>\n<p>")
+            outputStream.write("</p><p>")
         var countI = 0
         var countS = 0
         var countB = 0
@@ -383,7 +386,7 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
         }
         outputStream.newLine()
     }
-    outputStream.write("</p>\n</body>\n</html>")
+    outputStream.write("</p></body></html>")
     outputStream.close()
 }
 

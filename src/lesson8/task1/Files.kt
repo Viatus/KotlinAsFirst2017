@@ -304,7 +304,7 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
             try {
                 if (letter == '*' && line[j + 1] == '*' && line[j + 2] == '*') {
                     if (countB == 0) {
-                        if (""".*\*\*\*.*\*\*\*.*""".toRegex().matches(line.substring(j))) {
+                        if (""".*\*\*.*\*\*.*""".toRegex().matches(line.substring(j-1))) {
                             outputStream.write("<b>")
                             countB++
                         } else {
@@ -315,8 +315,12 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
                         countB--
                     }
                     if (countI == 0) {
-                        outputStream.write("<i>")
-                        countI++
+                        if (""".*\*.*\*.*""".toRegex().matches(line.substring(j-1))) {
+                            outputStream.write("<i>")
+                            countI++
+                        } else {
+                            outputStream.write("*")
+                        }
                     } else {
                         outputStream.write("</i>")
                         countI--
@@ -328,7 +332,7 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
             try {
                 if (letter == '*' && line[j + 1] == '*' && flag && line[j - 1] != '*') {
                     if (countB == 0) {
-                        if (""".*\*\*.*\*\*.*""".toRegex().matches(line.substring(j))) {
+                        if (""".*\*\*.*\*\*.*""".toRegex().matches(line.substring(j-1))) {
                             outputStream.write("<b>")
                             countB++
                         } else {
@@ -344,7 +348,7 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
             } catch (e: IndexOutOfBoundsException) {
                 if (j == 0) {
                     if (countB == 0) {
-                        if (""".*\*\*.*\*\*.*""".toRegex().matches(line.substring(j))) {
+                        if (""".*\*\*.*\*\*.*""".toRegex().matches(line.substring(j-1))) {
                             outputStream.write("<b>")
                             countB++
                         } else {
@@ -360,7 +364,7 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
             try {
                 if (letter == '*' && flag && line[j - 1] != '*') {
                     if (countI == 0) {
-                        if (""".*\*.*\*.*""".toRegex().matches(line.substring(j))) {
+                        if (""".*\*.*\*.*""".toRegex().matches(line.substring(j-1))) {
                             outputStream.write("<i>")
                             countI++
                         } else {
@@ -374,7 +378,7 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
                 }
             } catch (e: IndexOutOfBoundsException) {
                 if (countI == 0) {
-                    if (""".*\*.*\*.*""".toRegex().matches(line.substring(j))) {
+                    if (""".*\*.*\*.*""".toRegex().matches(line.substring(j-1))) {
                         outputStream.write("<i>")
                         countI++
                     } else {
@@ -389,7 +393,7 @@ fun markdownToHtmlSimple(inputName: String, outputName: String) {
             try {
                 if (letter == '~' && line[j + 1] == '~') {
                     if (countS == 0) {
-                        if (""".*~~.*~~.*""".toRegex().matches(line.substring(j))) {
+                        if (""".*~~.*~~.*""".toRegex().matches(line.substring(j-1))) {
                             outputStream.write("<s>")
                             countS++
                         } else {

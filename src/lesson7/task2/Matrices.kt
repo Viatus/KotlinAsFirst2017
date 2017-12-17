@@ -176,37 +176,11 @@ fun sumNeighbours(matrix: Matrix<Int>): Matrix<Int> {
     for (i in 0 until matrix.height) {
         for (j in 0 until matrix.width) {
             var sum = 0
-            try {
-                sum += matrix[i + 1, j + 1]
-            } catch (e: IllegalArgumentException) {
-            }
-            try {
-                sum += matrix[i + 1, j - 1]
-            } catch (e: IllegalArgumentException) {
-            }
-            try {
-                sum += matrix[i - 1, j + 1]
-            } catch (e: IllegalArgumentException) {
-            }
-            try {
-                sum += matrix[i - 1, j - 1]
-            } catch (e: IllegalArgumentException) {
-            }
-            try {
-                sum += matrix[i + 1, j]
-            } catch (e: IllegalArgumentException) {
-            }
-            try {
-                sum += matrix[i - 1, j]
-            } catch (e: IllegalArgumentException) {
-            }
-            try {
-                sum += matrix[i, j + 1]
-            } catch (e: IllegalArgumentException) {
-            }
-            try {
-                sum += matrix[i, j - 1]
-            } catch (e: IllegalArgumentException) {
+            for (newI in maxOf(i - 1, 0)..minOf(i + 1, matrix.height - 1)) {
+                for (newJ in maxOf(j - 1, 0)..minOf(j + 1, matrix.width - 1)) {
+                    if (j != newJ || i != newI)
+                        sum += matrix[newI, newJ]
+                }
             }
             newMatrix[i, j] = sum
         }

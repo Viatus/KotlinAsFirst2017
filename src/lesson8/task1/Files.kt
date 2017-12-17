@@ -73,23 +73,18 @@ fun countSubstrings(inputName: String, substrings: List<String>): Map<String, In
  */
 fun sibilants(inputName: String, outputName: String) {
     val outputStream = File(outputName).bufferedWriter()
+    val matches = mapOf<Char, Char>('ы' to 'и', 'Ы' to 'И', 'я' to 'а', 'Я' to 'А', 'ю' to 'у', 'Ю' to 'У')
     for (line in File(inputName).readLines()) {
         for ((i, letter) in line.withIndex()) {
             if (i != 0) {
-                if ((letter in listOf('ы', 'Ы', 'я', 'Я', 'ю', 'Ю')
-                        && line[i - 1] in listOf('ж', 'Ж', 'ч', 'Ч', 'ш', 'Ш', 'щ', 'Щ')))
+                if ((letter in matches.keys && line[i - 1].toLowerCase() in listOf('ж', 'ч', 'ш', 'щ')))
                     continue
             }
-            if (letter in listOf('ж', 'Ж', 'ч', 'Ч', 'ш', 'Ш', 'щ', 'Щ') && i != line.length - 1) {
-                when (line[i + 1]) {
-                    'ы' -> outputStream.write(StringBuilder(letter.toString()).append("и").toString())
-                    'Ы' -> outputStream.write(StringBuilder(letter.toString()).append("И").toString())
-                    'я' -> outputStream.write(StringBuilder(letter.toString()).append("а").toString())
-                    'Я' -> outputStream.write(StringBuilder(letter.toString()).append("А").toString())
-                    'ю' -> outputStream.write(StringBuilder(letter.toString()).append("у").toString())
-                    'Ю' -> outputStream.write(StringBuilder(letter.toString()).append("У").toString())
-                    else -> outputStream.write(letter.toString())
-                }
+            if (letter.toLowerCase() in listOf('ж', 'ч', 'ш', 'щ') && i != line.length - 1) {
+                if (matches[line[i + 1]] != null)
+                    outputStream.write(StringBuilder(letter.toString()).append(matches[line[i + 1]]).toString())
+                else
+                    outputStream.write(letter.toString())
             } else {
                 outputStream.write(letter.toString())
             }

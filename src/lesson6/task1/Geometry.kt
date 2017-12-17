@@ -270,11 +270,10 @@ fun minContainingCircle(vararg points: Point): Circle {
             for (k in 0 until points.size) {
                 if (i != j && k != j && k != i) {
                     newCircle = circleByThreePoints(points[i], points[j], points[k])
-                    if (isAllPointsContains(points, newCircle, listOf(points[i], points[j], points[k]))
-                            && newCircle.radius <= minRad) {
-                        circle = newCircle
-                        minRad = newCircle.radius
-                    }
+                    if (!isAllPointsContains(points, newCircle, listOf(points[i], points[j], points[k]))
+                            || newCircle.radius > minRad) continue
+                    circle = newCircle
+                    minRad = newCircle.radius
                 }
             }
         }

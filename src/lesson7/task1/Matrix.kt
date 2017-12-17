@@ -71,8 +71,7 @@ class MatrixImpl<E>(override val height: Int, override val width: Int, e: E) : M
     override fun set(row: Int, column: Int, value: E) = set(Cell(row, column), value)
 
     override fun set(cell: Cell, value: E) {
-        if (map[cell] != null)
-            map[cell] = value
+        map[cell] = value
     }
 
     override fun equals(other: Any?): Boolean = other is MatrixImpl<*> && height == other.height

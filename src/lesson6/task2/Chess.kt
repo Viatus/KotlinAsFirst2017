@@ -221,33 +221,34 @@ fun kingMoveNumber(start: Square, end: Square): Int {
 fun kingTrajectory(start: Square, end: Square): List<Square> {
     val path = mutableListOf<Square>(start)
     val minDiff = minOf(Math.abs(start.column - end.column), Math.abs(start.row - end.row))
-    val maxDiff = maxOf(Math.abs(start.column - end.column), Math.abs(start.row - end.row))
-    if (minDiff != 0 && maxDiff != 0) {
-        for (i in 1..minDiff) {
-            val newRow = start.row - i * (start.row - end.row) / Math.abs(start.row - end.row)
-            val newColumn = start.column - i * (start.column - end.column) / Math.abs(start.column - end.column)
-            path.add(Square(newColumn, newRow))
-        }
+    for (i in 1..minDiff) {
+        val newRow = start.row - i * (start.row - end.row) / Math.abs(start.row - end.row)
+        val newColumn = start.column - i * (start.column - end.column) / Math.abs(start.column - end.column)
+        path.add(Square(newColumn, newRow))
     }
     path.addAll(straightWay(path.last(), end))
     return path
 }
 
 fun straightWay(start: Square, end: Square): List<Square> {
+    if (start == end) return listOf()
     val straightPath = mutableListOf<Square>()
-    if (start.row - end.row == 0) {
-        for (i in 1..Math.abs(start.column - end.column)) {
-            val newCol = start.column - i * (start.column - end.column) / Math.abs(start.column - end.column)
-            straightPath.add(Square(newCol, start.row))
-        }
+    val maxDiff = maxOf(Math.abs(start.column - end.column), Math.abs(start.row - end.row))
+    var sign = 0
+    var isColChanging = true
+    if (Math.abs(start.column - end.column) == maxDiff) {
+        sign = (start.column - end.column) / maxDiff
     } else {
-        if (start.column - end.column == 0) {
-            for (i in 1..Math.abs(start.row - end.row)) {
-                val newRow = start.row - i * (start.row - end.row) / Math.abs(start.row - end.row)
-                straightPath.add(Square(start.column, newRow))
-            }
+        sign = (start.row - end.row) / maxDiff
+        isColChanging = false
+    }
+    for (i in 1..maxDiff) {
+        if (isColChanging) {
+            val newCol = start.column - i * sign
+            straightPath.add(Square(newCol, start.row))
         } else {
-            return listOf()
+            val newRow = start.row - i * sign
+            straightPath.add(Square(start.column, newRow))
         }
     }
     return straightPath

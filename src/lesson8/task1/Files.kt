@@ -75,16 +75,16 @@ fun sibilants(inputName: String, outputName: String) {
     val outputStream = File(outputName).bufferedWriter()
     val matches = mapOf<Char, Char>('ы' to 'и', 'Ы' to 'И', 'я' to 'а', 'Я' to 'А', 'ю' to 'у', 'Ю' to 'У')
     for (line in File(inputName).readLines()) {
+        var isChanged = true
         for ((i, letter) in line.withIndex()) {
-            if (i != 0) {
-                if ((letter in matches.keys && line[i - 1].toLowerCase() in listOf('ж', 'ч', 'ш', 'щ')))
-                    continue
+            if (!isChanged) {
+                isChanged = true
+                continue
             }
-            if (letter.toLowerCase() in listOf('ж', 'ч', 'ш', 'щ') && i != line.length - 1) {
-                if (matches[line[i + 1]] != null)
-                    outputStream.write(StringBuilder(letter.toString()).append(matches[line[i + 1]]).toString())
-                else
-                    outputStream.write(letter.toString())
+            if (letter.toLowerCase() in listOf('ж', 'ч', 'ш', 'щ') && i != line.length - 1
+                    && matches[line[i + 1]] != null) {
+                outputStream.write(letter.toString() + matches[line[i + 1]])
+                isChanged = false
             } else {
                 outputStream.write(letter.toString())
             }
@@ -192,17 +192,24 @@ fun transliterate(inputName: String, dictionary: Map<Char, String>, outputName: 
     val outputStream = File(outputName).bufferedWriter()
     for ((j, line) in File(inputName).readLines().withIndex()) {
         for (letter in line) {
-            var isInDictionary = false
-            for ((i, str) in dictionary) {
-                if (letter.toLowerCase() == i.toLowerCase()) {
-                    if (letter != i.toLowerCase())
-                        outputStream.write(str.capitalize())
-                    else
-                        outputStream.write(str)
-                    isInDictionary = true
-                }
+            var isWrote = false
+            if (dictionary[letter.toLowerCase()] != null) {
+                val str = dictionary[letter.toLowerCase()] ?: ""
+                if (letter.isLowerCase())
+                    outputStream.write(str)
+                else
+                    outputStream.write(str.capitalize())
+                isWrote = true
             }
-            if (!isInDictionary)
+            if (dictionary[letter.toUpperCase()] != null && !isWrote) {
+                val str = dictionary[letter.toUpperCase()] ?: ""
+                if (letter.isLowerCase())
+                    outputStream.write(str)
+                else
+                    outputStream.write(str.capitalize())
+                isWrote = true
+            }
+            if (!isWrote)
                 outputStream.write(letter.toString())
         }
         if (j != File(inputName).readLines().size - 1)

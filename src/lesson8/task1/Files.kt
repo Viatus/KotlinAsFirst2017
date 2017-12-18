@@ -195,18 +195,18 @@ fun transliterate(inputName: String, dictionary: Map<Char, String>, outputName: 
             var isWrote = false
             if (dictionary[letter.toLowerCase()] != null) {
                 val str = dictionary[letter.toLowerCase()] ?: ""
-                if (letter.isLowerCase())
-                    outputStream.write(str)
-                else
+                if (letter.isUpperCase())
                     outputStream.write(str.capitalize())
+                else
+                    outputStream.write(str)
                 isWrote = true
             }
             if (dictionary[letter.toUpperCase()] != null && !isWrote) {
                 val str = dictionary[letter.toUpperCase()] ?: ""
-                if (letter.isLowerCase())
-                    outputStream.write(str)
-                else
+                if (letter.isUpperCase())
                     outputStream.write(str.capitalize())
+                else
+                    outputStream.write(str)
                 isWrote = true
             }
             if (!isWrote)
